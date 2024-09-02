@@ -1,5 +1,14 @@
 {% extends 'main/base.html'%}
 {% block title%}Home Page{%endblock%}
 {%block content%}
-<h1>Home Page</h1>
+
+{%if user%}
+<h1>
+    Hello {{user}}
+</h1>
+<form method="post" action="logout/">
+    {%csrf_token%}
+    <button type="submit" class="btn btn_success">Logout</button>
+</form>
+{%endif%}
 {%endblock%}
