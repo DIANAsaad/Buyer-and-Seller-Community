@@ -1,13 +1,16 @@
 from django.shortcuts import render, redirect
 from django.shortcuts import HttpResponse
 from main.forms import RegisterForm
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import get_user,login, logout, authenticate
 # Create your views here.
 
 
 
 def home(request):
-   return render(request,'main/home.html')
+   user = None
+   if not request.user.is_anonymous:
+      user=get_user(request)
+   return render(request,'main/home.html',{'user':user})
 
 
 def sign_up(request):
@@ -20,3 +23,7 @@ def sign_up(request):
    else:
       form=RegisterForm()
    return render(request,'registration/sign_up.html',{'form': form})
+
+def logout(resquest):
+   logout(resquest)
+   return redirect('/login')
