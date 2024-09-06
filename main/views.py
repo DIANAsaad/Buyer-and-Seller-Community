@@ -6,6 +6,10 @@ from django.contrib.auth import get_user,login, logout, authenticate
 
 
 
+def welcome(request):
+   return render (request,'main/welcome.html')
+
+
 def home(request):
    user = None
    if not request.user.is_anonymous:
