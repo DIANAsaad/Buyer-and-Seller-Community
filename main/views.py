@@ -15,10 +15,9 @@ def welcome(request):
 
 @login_required(login_url='/login')
 def home(request):
-   user = None
-   if not request.user.is_anonymous:
-      user=get_user(request)
-   return render(request,'main/home.html',{'user':user})
+   posts=Post.objects.all()
+   for item in posts:
+      return render(request,'main/home.html',{'posts':posts})
 
 
 def sign_up(request):

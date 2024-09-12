@@ -22,7 +22,7 @@
                     <span class="navbar-text text-white" style="margin-right: 10px;">
                         Logged in as {{ user.username }} |
                     </span>
-                    <form action="{% url 'logout' %}" method="POST" style="margin-right: 10px; margin-bottom: 0;">
+                    <form action="{% url 'user_logout' %}" method="POST" style="margin-right: 10px; margin-bottom: 0;">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-link text-white" style="padding: 0;">Logout</button>
                     </form>
