@@ -26,68 +26,75 @@
 
 {% block extra_css %}
 <style>
-    .card-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 15px;
-        justify-content: center;
-    }
+ .card-container {
+    display: flex;
+    flex-direction: column;  /* Stack cards vertically */
+    gap: 15px;               /* Space between cards */
+    align-items: flex-start; /* Align cards to the left */
+    padding: 15px;           /* Padding around the container */
+}
 
-    .card {
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        overflow: hidden;
-        width: 200px;  /* Fixed width */
-        height: 300px; /* Fixed height */
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        text-align: center;
-        display: flex;
-        flex-direction: column;
-    }
+.card {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+    width: 100%;              /* Full width of its container */
+    max-width: 400px;         /* Maximum width of the card */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;   /* Stack image and text vertically */
+    height: auto;             /* Allow height to be flexible */
+    text-align: center;
+}
 
-    .image-wrapper {
-        width: 100%;
-        height: 150px; /* Fixed height for the image container */
-        overflow: hidden;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
+.image-wrapper {
+    flex: 0 0 85%;            /* Image takes 85% of the card height */
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
-    .card img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover; /* Ensure the image fills the container */
-    }
+.card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;        /* Ensure the image covers the container */
+}
 
-    .card-body {
-        padding: 10px;
-        font-size: 12px;
-    }
+.card-body {
+    flex: 0 0 15%;            /* Text area takes 15% of the card height */
+    padding: 10px;
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;  /* Center content vertically */
+}
 
-    .card-title {
-        font-size: 14px;
-        font-weight: bold;
-        margin-bottom: 3px;
-    }
+.card-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 3px;
+}
 
-    .card-text {
-        font-size: 12px;
-        color: #555;
-        margin-bottom: 5px;
-    }
+.card-text {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 5px;
+}
 
-    .card-footer {
-        padding: 5px;
-        background-color: #f8f9fa;
-        border-top: 1px solid #ccc;
-    }
+.card-footer {
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-top: 1px solid #ccc;
+    display: flex;
+    justify-content: center; /* Center align buttons */
+}
 
-    .btn {
-        margin: 3px;
-        width: 60px;
-        font-size: 12px;
-    }
+.btn {
+    margin: 5px;
+    font-size: 14px;
+}
+
 </style>
 
 

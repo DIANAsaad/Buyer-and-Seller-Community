@@ -11,6 +11,8 @@ from main.models import Post
 
 
 def welcome(request):
+   if request.user.is_authenticated:
+      return redirect("/home")
    return render (request,'main/welcome.html')
 
 @login_required(login_url='/login')
@@ -48,3 +50,4 @@ def create_post(request):
     else:
      form=PostForm()
     return render(request,'main/create_post.html',{'form':form})
+
