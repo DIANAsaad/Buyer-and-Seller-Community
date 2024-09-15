@@ -9,7 +9,6 @@ from main.models import Post
 # Create your views here.
 
 
-
 def welcome(request):
    if request.user.is_authenticated:
       return redirect("/home")
