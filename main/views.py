@@ -5,6 +5,7 @@ from django.contrib.auth import get_user,login, authenticate
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import logout as logout
 from main.models import Post
+from django.contrib.auth.models import User, Group
 
 # Create your views here.
 
@@ -19,10 +20,18 @@ def home(request):
    posts=Post.objects.all()
    if request.method=="POST":
       post_id=request.POST.get("post-id")
-      post=Post.objects.filter(id=post_id).first()
-      if post and (post.author==request.user or request.user.has_perm("main.delete_post")):
-         post.delete()
-    
+      user_id=request.POST.get("user-id")
+      if post_id:
+         post=Post.objects.get(id=post_id).first()
+         if post and (post.author==request.user or request.user.has_perm("main.delete_post")):
+            post.delete()
+      elif user_id:
+       user=User.objects.get(id=user_id).first().remove(user)
+       if user and user.is_staff:
+           group=Group.objects.get(name='vip')
+           group.user_set.remove(user)
+ 
+         
    for item in posts:
       return render(request,'main/home.html',{'posts':posts})
 
