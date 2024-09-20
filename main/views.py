@@ -22,7 +22,7 @@ def home(request):
       post_id=request.POST.get("post-id")
       user_id=request.POST.get("user-id")
       if post_id:
-         post=Post.objects.get(id=post_id).first()
+         post=Post.objects.filter(id=post_id).first()
          if post and (post.author==request.user or request.user.has_perm("main.delete_post")):
             post.delete()
       elif user_id:
