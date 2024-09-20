@@ -20,20 +20,27 @@ def home(request):
    posts=Post.objects.all()
    if request.method=="POST":
       post_id=request.POST.get("post-id")
-      user_id=request.POST.get("user-id")
       if post_id:
          post=Post.objects.filter(id=post_id).first()
          if post and (post.author==request.user or request.user.has_perm("main.delete_post")):
-            post.delete()
-      elif user_id:
-       user=User.objects.get(id=user_id).first().remove(user)
-       if user and user.is_staff:
-           group=Group.objects.get(name='vip')
-           group.user_set.remove(user)
- 
-         
+            post.delete()    
    for item in posts:
       return render(request,'main/home.html',{'posts':posts})
+   
+
+@login_required(login_url='/login')
+def ban(request):
+   if request.method=="POST":
+      user_id=request.POST.get("user-id")
+      if user_id:
+         user=User.objects.filter(id=user_id).first()
+         if user:
+              group=Group.objects.filter(name='default')
+              group.user_set.remove(user) 
+      return redirect ('/home')
+
+
+
 
 
 def sign_up(request):
