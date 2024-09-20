@@ -1,13 +1,40 @@
 {% extends 'main/base.html'%}
 {% block title%} Welcome Page {%endblock%}
 {% block content %}
-     <h1>
-        Welcome to the art community website.
-     </h1>
-     <body>
-        <p> Don't have an account? <a href="/sign-up">Get startded></a>!</p>
-        <p> Have an account? <a href="/login">Login></a>!</p>
-     </body>
-    
+<h1 style="font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, serif; 
+           font-weight: bold; 
+           font-size: 3em; 
+           color: #2c3e50; 
+           text-align: center; 
+           letter-spacing: 2px; 
+           text-transform: uppercase; 
+           margin-top: 40px;">
+    Welcome to the Art Community
+</h1>
+<body>
+    <div class="image-wrapper" style="position: relative; text-align: center; margin-top: 30px;">
+        <img src="https://images.unsplash.com/photo-1562169819-9f9031fedd3d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
+             alt="Abstract Art" 
+             style="width: 100%; height: auto; opacity: 0.5;">
+
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #222c36;">
+         <p style="font-size: 1.3em; font-family: 'Georgia', serif; background-color: rgba(255, 255, 255, 0.7); padding: 20px; border-radius: 10px;">
+            Our community is a safe and welcoming space for artists to share their work, connect with others, and gain valuable experience. Whether you’re a beginner or a seasoned artist, you’ll find a supportive environment to grow your creativity.
+        </p>
+            <p style="font-size: 1.5em; font-family: 'Georgia', serif; font-weight: bold;">
+                <a href="/sign-up" style="color: #FF5733; text-decoration: none; background-color: rgba(255, 255, 255, 0.7); padding: 10px 20px; border-radius: 8px;">
+                    Join Our Community
+                </a>
+            </p>
+            <p style="font-size: 1.5em; font-family: 'Georgia', serif; font-weight: bold; margin-top: 20px;">
+                <a href="/login" style="color: #3498db; text-decoration: none; background-color: rgba(255, 255, 255, 0.7); padding: 10px 20px; border-radius: 8px;">
+                    Log in to Explore
+                </a>
+            </p>
+        </div>
+    </div>
+</body>
+
+
 
 {%endblock%}
