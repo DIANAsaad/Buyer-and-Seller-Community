@@ -2,121 +2,177 @@
 {% block title%}Home Page{%endblock%}
 
 {% block content %}
-<h1>Posts</h1>
-<div class="card-container">
+<h1>Art Community Gallery</h1>
+<div class="gallery-container">
     {% for post in posts %}
-    <div class="card">
+    <div class="art-card">
         <div class="image-wrapper">
             <img src="{{ post.image_url }}" alt="{{ post.title }}">
         </div>
-        <div class="card-body">
-            <h3 class="card-title">{{ post.author.username }}</h3>
-            <p class="card-text">{{post.title}}, {{ post.description }}</p>
+        <div class="art-card-body">
+            <h3 class="artist-name">{{ post.author.username }}</h3>
+            <h4 class="art-title">{{ post.title }}</h4>
+            <p class="art-description">{{ post.description }}</p>
         </div>
-        <div class="card-footer">
-            <button class="btn btn-primary">Like</button>
-            <button class="btn btn-secondary">DM</button>
-            {%if user == post.author or perms.main.delete_post%}
-             <form method = "post">
-                {%csrf_token%}
-                <button type="submit" class="btn btn-danger" name="post-id" value="{{post.id}}">Delete</button>
+        <div class="art-card-footer">
+            <button class="btn btn-primary">
+                <i class="fas fa-thumbs-up"></i> Like
+            </button>
+            <button class="btn btn-secondary">
+                <i class="fas fa-comment"></i> DM
+            </button>
+            {% if user == post.author or perms.main.delete_post %}
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger" name="post-id" value="{{ post.id }}">Delete</button>
             </form>
-            {%endif%}
-            {%if user.is_staff%}
-            <form method = "post">
-               {%csrf_token%}
-               <button type="submit" class="btn btn-warning" name="user-id" value="{{post.author_id}}" >Ban</button>
-           </form>
-           {%endif%}
-
-
-
-
-
+            {% endif %}
+            {% if user.is_staff %}
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-warning" name="user-id" value="{{ post.author_id }}">Ban</button>
+            </form>
+            {% endif %}
         </div>
-
     </div>
     {% empty %}
-    <p>No posts yet</p>
+    <p>No artworks available yet. Join us and share your creations!</p>
     {% endfor %}
 </div>
 {% endblock %}
 
 {% block extra_css %}
 <style>
- .card-container {
-    display: flex;
-    flex-direction: column;  /* Stack cards vertically */
-    gap: 15px;               /* Space between cards */
-    align-items: flex-start; /* Align cards to the left */
-    padding: 15px;           /* Padding around the container */
-}
+    body {
+        background-color: #f9f9f9;  /* Light background for an Instagram feel */
+        font-family: 'Georgia', serif;  /* Elegant font for artistic touch */
+        color: #333;
+    }
 
-.card {
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    overflow: hidden;
-    width: 100%;              /* Full width of its container */
-    max-width: 400px;         /* Maximum width of the card */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;   /* Stack image and text vertically */
-    height: auto;             /* Allow height to be flexible */
-    text-align: center;
-}
+    .gallery-container {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;  /* Align cards to the left */
+        gap: 20px;  /* Space between cards */
+        padding: 20px;  /* Padding around the container */
+    }
 
-.image-wrapper {
-    flex: 0 0 85%;            /* Image takes 85% of the card height */
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+    .art-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        width: 100%;  /* Full width of its container */
+        max-width: 400px;  /* Maximum width of the card */
+        display: flex;
+        flex-direction: column;  /* Stack image and text vertically */
+        transition: transform 0.2s;
+        overflow: hidden;  /* Ensure content stays within bounds */
+    }
 
-.card img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;        /* Ensure the image covers the container */
-}
+    .art-card:hover {
+        transform: translateY(-5px);  /* Lift effect on hover */
+    }
 
-.card-body {
-    flex: 0 0 15%;            /* Text area takes 15% of the card height */
-    padding: 10px;
-    font-size: 14px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;  /* Center content vertically */
-}
+    .image-wrapper {
+        flex: 0 0 70%;  /* Image takes 70% of the card height */
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
-.card-title {
-    font-size: 16px;
-    font-weight: bold;
-    margin-bottom: 3px;
-}
+    .art-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;  /* Ensure the image covers the container */
+    }
 
-.card-text {
-    font-size: 14px;
-    color: #555;
-    margin-bottom: 5px;
-}
+    .art-card-body {
+        flex: 0 0 30%;  /* Text area takes 30% of the card height */
+        padding: 15px;
+        text-align: left;
+    }
 
-.card-footer {
-    padding: 10px;
-    background-color: #f8f9fa;
-    border-top: 1px solid #ccc;
-    display: flex;
-    justify-content: center; /* Center align buttons */
-}
+    .artist-name {
+        font-size: 20px;
+        font-weight: bold;
+        color: #1a1a1a;
+    }
 
-.btn {
-    margin: 5px;
-    font-size: 14px;
-}
+    .art-title {
+        font-size: 18px;
+        color: #3a3a3a;
+        margin: 5px 0;
+    }
 
+    .art-description {
+        font-size: 14px;
+        color: #666;
+    }
+
+    .art-card-footer {
+        padding: 10px;
+        background-color: #fff;
+        border-top: 1px solid #ccc;
+        display: flex;
+        justify-content: space-between;  /* Spread buttons evenly */
+        align-items: center;  /* Center align buttons */
+    }
+
+    .btn {
+        padding: 8px 12px;
+        font-size: 14px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        display: flex;
+        align-items: center;
+    }
+
+    .btn i {
+        margin-right: 5px;  /* Space between icon and text */
+    }
+
+    .btn-primary {
+        background-color: #0095f6;  /* Instagram-like blue */
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background-color: #007bbd;
+    }
+
+    .btn-secondary {
+        background-color: #e1e1e1;  /* Light grey for secondary buttons */
+        color: #333;
+    }
+
+    .btn-secondary:hover {
+        background-color: #d1d1d1;
+    }
+
+    .btn-danger {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background-color: #c82333;
+    }
+
+    .btn-warning {
+        background-color: #ffc107;
+        color: white;
+    }
+
+    .btn-warning:hover {
+        background-color: #e0a800;
+    }
 </style>
-
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 {% endblock %}
+
 
 
 
