@@ -10,4 +10,5 @@ urlpatterns=[
     path('sign-up',views.sign_up),
     path('create_post',views.create_post),
     path('ban',views.ban),
+    path('add_comment',views.add_comment),
             ]

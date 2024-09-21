@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect
 from django.shortcuts import HttpResponse
-from main.forms import RegisterForm, PostForm
+from main.forms import RegisterForm, PostForm, CommentForm
 from django.contrib.auth import get_user,login, authenticate
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import logout as logout
-from main.models import Post
+from main.models import Post, Comment
 from django.contrib.auth.models import User, Group
 
 # Create your views here.
@@ -24,23 +24,34 @@ def home(request):
          post=Post.objects.filter(id=post_id).first()
          if post and (post.author==request.user or request.user.has_perm("main.delete_post")):
             post.delete()    
-   for item in posts:
-      return render(request,'main/home.html',{'posts':posts})
-   
+   for post in posts:
+        return render(request,'main/home.html',{'posts':posts})
+
+@login_required(login_url='/login')
+def add_comment(request):
+  if request.method=="POST":
+       form=CommentForm(request.POST)
+       if form.is_valid():
+         comment=form.save(commit=False)
+         post_id=request.POST.get('post-id')
+         comment.post=Post.objects.get(id=post_id)
+         comment.author=request.user
+         comment.save()
+         redirect('/home')
+  else:
+     form=CommentForm()
+  return render(request,'main/home.html',{'form':form})
 
 @login_required(login_url='/login')
 def ban(request):
-   if request.method=="POST":
+   if request.method=="POST" and request.user.is_staff:
       user_id=request.POST.get("user-id")
       if user_id:
          user=User.objects.filter(id=user_id).first()
          if user:
-              group=Group.objects.filter(name='default')
+              group=Group.objects.filter(name='default').first()
               group.user_set.remove(user) 
       return redirect ('/home')
-
-
-
 
 
 def sign_up(request):

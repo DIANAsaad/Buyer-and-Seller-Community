@@ -1,8 +1,9 @@
 {% extends 'main/base.html'%}
 {% block title%}Home Page{%endblock%}
-
-{% block content %}
+{% load crispy_forms_tags%}
+{% block content%}
 <h1>Art Community Gallery</h1>
+
 <div class="gallery-container">
     {% for post in posts %}
     <div class="art-card">
@@ -28,151 +29,230 @@
             </form>
             {% endif %}
             {% if user.is_staff %}
-            <form method="post">
+            <form action="/ban" method="post" onsubmit="return confirm('Are you sure you want to ban this user?');">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-warning" name="user-id" value="{{ post.author_id }}">Ban</button>
+                <input type="hidden" name="user-id" value="{{ post.author_id }}">
+                <button type="submit" class="btn btn-warning">Ban</button>
             </form>
             {% endif %}
         </div>
-    </div>
+
+        <!-- Comments Section -->
+        <div class="comments-section">
+            <h5 class="comments-heading">Comments:</h5>
+        
+            {% for comment in post.comments.all %}
+            <div class="comment">
+                <strong>{{ comment.author.username }}</strong>:
+                <span>{{ comment.content }}</span>
+            </div>
+            {% empty %}
+            <p>No comments yet. Be the first to comment!</p>
+            {% endfor %}
+        
+            <!-- Add Comment Form -->
+            <div class="comment-section">
+                <form method="post" action="/add_comment">
+                    {% csrf_token %}
+                    <textarea name="comment" class="comment-box" placeholder="Add a comment..." required></textarea>
+                    <input type="hidden" name="post-id" value="{{ post.id }}">  <!-- Hidden field for post ID -->
+                    <button type="submit" class="btn btn-comment">Post Comment</button>
+                </form>
+            </div>
+        </div>
+        
     {% empty %}
-    <p>No artworks available yet. Join us and share your creations!</p>
+    <p class="no-art">No artworks available yet. Join us and share your creations!</p>
     {% endfor %}
 </div>
 {% endblock %}
 
 {% block extra_css %}
 <style>
+    /* Global Styles */
     body {
-        background-color: #f9f9f9;  /* Light background for an Instagram feel */
-        font-family: 'Georgia', serif;  /* Elegant font for artistic touch */
+        background-color: #f4f4f9;
+        font-family: 'Lora', serif;
         color: #333;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1 {
+        text-align: left;
+        font-size: 32px;
+        margin: 20px 50px;
     }
 
     .gallery-container {
         display: flex;
         flex-direction: column;
-        align-items: flex-start;  /* Align cards to the left */
-        gap: 20px;  /* Space between cards */
-        padding: 20px;  /* Padding around the container */
+        align-items: flex-start;
+        gap: 30px;
+        padding: 20px 50px;
     }
 
     .art-card {
-        background: white;
+        background: #fff;
         border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        width: 100%;  /* Full width of its container */
-        max-width: 400px;  /* Maximum width of the card */
-        display: flex;
-        flex-direction: column;  /* Stack image and text vertically */
-        transition: transform 0.2s;
-        overflow: hidden;  /* Ensure content stays within bounds */
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        max-width: 500px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden;
+        margin-bottom: 20px;
     }
 
     .art-card:hover {
-        transform: translateY(-5px);  /* Lift effect on hover */
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
     }
 
     .image-wrapper {
-        flex: 0 0 70%;  /* Image takes 70% of the card height */
+        height: 70%;
         overflow: hidden;
-        display: flex;
-        align-items: center;
-        justify-content: center;
     }
 
     .art-card img {
         width: 100%;
         height: 100%;
-        object-fit: cover;  /* Ensure the image covers the container */
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .art-card:hover img {
+        transform: scale(1.1);
     }
 
     .art-card-body {
-        flex: 0 0 30%;  /* Text area takes 30% of the card height */
+        height: 30%;
         padding: 15px;
-        text-align: left;
     }
 
     .artist-name {
         font-size: 20px;
         font-weight: bold;
-        color: #1a1a1a;
+        color: #2a2a2a;
     }
 
     .art-title {
         font-size: 18px;
-        color: #3a3a3a;
-        margin: 5px 0;
+        color: #555;
+        margin-top: 5px;
     }
 
     .art-description {
-        font-size: 14px;
-        color: #666;
+        font-size: 15px;
+        color: #777;
+        margin-top: 10px;
+        line-height: 1.6;
     }
 
     .art-card-footer {
-        padding: 10px;
-        background-color: #fff;
-        border-top: 1px solid #ccc;
         display: flex;
-        justify-content: space-between;  /* Spread buttons evenly */
-        align-items: center;  /* Center align buttons */
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px;
+        background-color: #f9f9f9;
+        border-top: 1px solid #eee;
     }
 
     .btn {
-        padding: 8px 12px;
+        padding: 10px 15px;
         font-size: 14px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-        display: flex;
+        border-radius: 50px;
+        display: inline-flex;
         align-items: center;
+        cursor: pointer;
     }
 
     .btn i {
-        margin-right: 5px;  /* Space between icon and text */
+        margin-right: 5px;
     }
 
     .btn-primary {
-        background-color: #0095f6;  /* Instagram-like blue */
+        background-color: #0056b3;
         color: white;
-    }
-
-    .btn-primary:hover {
-        background-color: #007bbd;
     }
 
     .btn-secondary {
-        background-color: #e1e1e1;  /* Light grey for secondary buttons */
+        background-color: #e1e1e1;
         color: #333;
     }
 
-    .btn-secondary:hover {
-        background-color: #d1d1d1;
-    }
-
     .btn-danger {
-        background-color: #dc3545;
+        background-color: #d9534f;
         color: white;
-    }
-
-    .btn-danger:hover {
-        background-color: #c82333;
     }
 
     .btn-warning {
-        background-color: #ffc107;
+        background-color: #f0ad4e;
         color: white;
     }
 
-    .btn-warning:hover {
-        background-color: #e0a800;
+    /* Comments Section */
+    .comments-section {
+        padding: 15px;
+        background-color: #fafafa;
+        border-top: 1px solid #eee;
+        margin-top: 15px;
+    }
+
+    .comments-heading {
+        font-size: 16px;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .comment {
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+    }
+
+    .comment-timestamp {
+        font-size: 12px;
+        color: #999;
+    }
+
+    /* Add Comment Section */
+    .comment-section {
+        padding: 20px;
+        border-top: 1px solid #eee;
+        background-color: #fafafa;
+    }
+
+    .comment-box {
+        width: 100%;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-family: inherit;
+        font-size: 14px;
+        margin-bottom: 10px;
+        resize: none;
+    }
+
+    .btn-comment {
+        background-color: #0095f6;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-comment:hover {
+        background-color: #007bbd;
+    }
+
+    /* Empty State */
+    .no-art {
+        text-align: left;
+        font-size: 18px;
+        color: #777;
+        margin: 40px 50px;
     }
 </style>
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 {% endblock %}
-
-
-
-
