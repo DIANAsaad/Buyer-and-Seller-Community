@@ -1,8 +1,18 @@
-{% extends 'main/base.html'%}
-{% block title%}Home Page{%endblock%}
-{% load crispy_forms_tags%}
-{% block content%}
-<h1>Art Community Gallery</h1>
+{% extends 'main/base.html' %}
+{% block title %}Home Page{% endblock %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="header-container">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap" rel="stylesheet">
+    <style>
+        .white-text {
+            color: white;
+            font-family: 'Dancing Script', cursive; 
+            font-size: 36px;
+        }
+    </style>
+    <h1 class="white-text">Art Community Gallery</h1>
+</div>
 
 <div class="gallery-container">
     {% for post in posts %}
@@ -16,11 +26,11 @@
             <p class="art-description">{{ post.description }}</p>
         </div>
         <div class="art-card-footer">
-            <button class="btn btn-primary">
-                <i class="fas fa-thumbs-up"></i> Like
+            <button class="btn-icon btn-primary">
+                <i class="fas fa-heart"></i>
             </button>
-            <button class="btn btn-secondary">
-                <i class="fas fa-comment"></i> DM
+            <button class="btn-icon btn-secondary">
+                <i class="fas fa-comment"></i>
             </button>
             {% if user == post.author or perms.main.delete_post %}
             <form method="post">
@@ -37,30 +47,34 @@
             {% endif %}
         </div>
 
-        <!-- Comments Section -->
-        <div class="comments-section">
-            <h5 class="comments-heading">Comments:</h5>
-        
-            {% for comment in post.comments.all %}
-            <div class="comment">
-                <strong>{{ comment.author.username }}</strong>:
-                <span>{{ comment.content }}</span>
-            </div>
-            {% empty %}
-            <p>No comments yet. Be the first to comment!</p>
-            {% endfor %}
-        
-            <!-- Add Comment Form -->
-            <div class="comment-section">
-                <form method="post" action="/add_comment">
-                    {% csrf_token %}
-                    <textarea name="comment" class="comment-box" placeholder="Add a comment..." required></textarea>
-                    <input type="hidden" name="post-id" value="{{ post.id }}">  <!-- Hidden field for post ID -->
+        <!-- Add Comment Form -->
+        <div class="comment-section">
+            <form method="post" action="/add_comment" class="comment-form">
+                {% csrf_token %}
+                <div class="comment-input-container">
+                    <textarea name="content" class="comment-box" placeholder="Add a comment..." required></textarea>
                     <button type="submit" class="btn btn-comment">Post Comment</button>
-                </form>
+                </div>
+                <input type="hidden" name="post-id" value="{{ post.id }}">
+            </form>
+            
+            <div class="comments-display">
+                {% for comment in post.comment_set.all|slice:":1" %}
+                <div class="comment">
+                    <strong>{{ comment.author.username }}</strong>:
+                    <span>{{ comment.content }}</span>
+                    <span class="comment-timestamp">{{ comment.timestamp|date:"F j, Y, g:i a" }}</span>
+                </div>
+                {% empty %}
+                <p>No comments yet. Be the first to comment!</p>
+                {% endfor %}
             </div>
+            
+            {% if post.comment_set.count > 1 %}
+            <button class="btn btn-more-comments">View More Comments</button>
+            {% endif %}
         </div>
-        
+    </div>  
     {% empty %}
     <p class="no-art">No artworks available yet. Join us and share your creations!</p>
     {% endfor %}
@@ -69,6 +83,25 @@
 
 {% block extra_css %}
 <style>
+    /* Header Styles */
+    .header-container {
+        background-image: url('https://images.unsplash.com/photo-1562169819-9f9031fedd3d?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); 
+        background-size: cover;
+        background-position: center;
+        color: rgb(156, 120, 63);
+        text-align: center;
+        padding: 80px 20px;
+        margin-bottom: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        width: 100vw; 
+        height: auto;
+        opacity: 0.85;
+        position: relative; 
+        left: 50%; 
+        transform: translateX(-50%); 
+    }
+
     /* Global Styles */
     body {
         background-color: #f4f4f9;
@@ -76,12 +109,6 @@
         color: #333;
         margin: 0;
         padding: 0;
-    }
-
-    h1 {
-        text-align: left;
-        font-size: 32px;
-        margin: 20px 50px;
     }
 
     .gallery-container {
@@ -156,27 +183,17 @@
         border-top: 1px solid #eee;
     }
 
-    .btn {
-        padding: 10px 15px;
-        font-size: 14px;
-        border-radius: 50px;
-        display: inline-flex;
-        align-items: center;
+    .btn-icon {
+        background: transparent;
+        border: none;
         cursor: pointer;
+        padding: 10px;
+        color: rgb(168, 111, 37); /* Inherit the text color */
+        font-size: 20px; /* Adjust size as needed */
     }
 
-    .btn i {
-        margin-right: 5px;
-    }
-
-    .btn-primary {
-        background-color: #0056b3;
-        color: white;
-    }
-
-    .btn-secondary {
-        background-color: #e1e1e1;
-        color: #333;
+    .btn-icon:hover {
+        color: #0056b3; /* Change color on hover */
     }
 
     .btn-danger {
@@ -190,59 +207,71 @@
     }
 
     /* Comments Section */
-    .comments-section {
-        padding: 15px;
-        background-color: #fafafa;
+    .comment-section {
+        padding: 20px;
         border-top: 1px solid #eee;
+        background-color: #fafafa;
+        border-radius: 8px;
         margin-top: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
-    .comments-heading {
-        font-size: 16px;
-        color: #333;
-        margin-bottom: 10px;
+    .comment-input-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .comment-box {
+        flex-grow: 1; /* Allow the textarea to take available space */
+        margin-right: 10px; /* Space between textarea and button */
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        resize: none; /* Prevent resizing */
+    }
+
+    .comments-display {
+        max-height: 150px; /* Limit height for scrolling */
+        overflow-y: auto;  /* Enable vertical scrolling */
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #fff;
+        margin-top: 10px;
     }
 
     .comment {
-        padding: 10px 0;
+        padding: 10px;
         border-bottom: 1px solid #eee;
+    }
+
+    .comment:last-child {
+        border-bottom: none; /* Remove border for last comment */
     }
 
     .comment-timestamp {
         font-size: 12px;
         color: #999;
+        display: block; /* Show timestamp on a new line */
+        margin-top: 5px;
     }
 
-    /* Add Comment Section */
-    .comment-section {
-        padding: 20px;
-        border-top: 1px solid #eee;
-        background-color: #fafafa;
-    }
-
-    .comment-box {
-        width: 100%;
-        padding: 10px;
-        border-radius: 8px;
-        border: 1px solid #ccc;
-        font-family: inherit;
-        font-size: 14px;
-        margin-bottom: 10px;
-        resize: none;
-    }
-
-    .btn-comment {
-        background-color: #0095f6;
+    .btn-more-comments {
+        background-color: #0056b3;
         color: white;
         border: none;
-        padding: 8px 16px;
-        border-radius: 50px;
+        padding: 10px 15px;
+        border-radius: 5px;
         cursor: pointer;
-        transition: background-color 0.3s ease;
+        margin-top: 10px;
+        display: block;
+        width: 100%; /* Make it full-width */
+        text-align: center;
     }
 
-    .btn-comment:hover {
-        background-color: #007bbd;
+    .btn-more-comments:hover {
+        background-color: #004494;
     }
 
     /* Empty State */
@@ -250,9 +279,7 @@
         text-align: left;
         font-size: 18px;
         color: #777;
-        margin: 40px 50px;
+        margin: 10px;
     }
 </style>
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 {% endblock %}

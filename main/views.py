@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import logout as logout
 from main.models import Post, Comment
 from django.contrib.auth.models import User, Group
-
+from django.contrib import messages
 # Create your views here.
 
 
@@ -17,15 +17,15 @@ def welcome(request):
 
 @login_required(login_url='/login')
 def home(request):
-   posts=Post.objects.all()
+   posts=Post.objects.prefetch_related('comment_set').all()
    if request.method=="POST":
       post_id=request.POST.get("post-id")
       if post_id:
          post=Post.objects.filter(id=post_id).first()
          if post and (post.author==request.user or request.user.has_perm("main.delete_post")):
             post.delete()    
-   for post in posts:
-        return render(request,'main/home.html',{'posts':posts})
+ 
+   return render(request,'main/home.html',{'posts':posts})  
 
 @login_required(login_url='/login')
 def add_comment(request):
@@ -36,11 +36,10 @@ def add_comment(request):
          post_id=request.POST.get('post-id')
          comment.post=Post.objects.get(id=post_id)
          comment.author=request.user
-         comment.save()
-         redirect('/home')
-  else:
-     form=CommentForm()
-  return render(request,'main/home.html',{'form':form})
+         comment.save()    
+       else:
+          form=CommentForm() 
+  return redirect('/home')
 
 @login_required(login_url='/login')
 def ban(request):
