@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect
 from django.shortcuts import HttpResponse
-from main.forms import RegisterForm, PostForm, CommentForm
+from main.forms import RegisterForm, PostForm, CommentForm, LikeForm
 from django.contrib.auth import get_user,login, authenticate
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import logout as logout
-from main.models import Post, Comment
+from main.models import Post, Comment, Like
 from django.contrib.auth.models import User, Group
 from django.contrib import messages
 # Create your views here.
@@ -26,6 +26,39 @@ def home(request):
             post.delete()    
  
    return render(request,'main/home.html',{'posts':posts})  
+
+def sign_up(request):
+   if request.method=='POST':
+      form=RegisterForm(request.POST)
+      if form.is_valid():
+         user=form.save()
+         login(request, user)
+         return redirect('/home')
+   else:
+      form=RegisterForm()
+   return render(request,'registration/sign_up.html',{'form': form})
+
+def user_logout(request):
+   logout(request)
+   return redirect('/')
+
+
+#User&Post operations
+
+
+@permission_required("main.add_post",login_url="/login", raise_exception=True)
+@login_required(login_url='/login')
+def create_post(request):
+    if request.method=="POST":
+       form=PostForm(request.POST)
+       if form.is_valid():
+          post=form.save(commit=False)
+          post.author=request.user
+          post=form.save()
+          return redirect ('/home')
+    else:
+     form=PostForm()
+    return render(request,'main/create_post.html',{'form':form})
 
 @login_required(login_url='/login')
 def add_comment(request):
@@ -52,33 +85,13 @@ def ban(request):
               group.user_set.remove(user) 
       return redirect ('/home')
 
-
-def sign_up(request):
-   if request.method=='POST':
-      form=RegisterForm(request.POST)
-      if form.is_valid():
-         user=form.save()
-         login(request, user)
-         return redirect('/home')
-   else:
-      form=RegisterForm()
-   return render(request,'registration/sign_up.html',{'form': form})
-
-def user_logout(request):
-   logout(request)
-   return redirect('/')
-
-@permission_required("main.add_post",login_url="/login", raise_exception=True)
 @login_required(login_url='/login')
-def create_post(request):
-    if request.method=="POST":
-       form=PostForm(request.POST)
-       if form.is_valid():
-          post=form.save(commit=False)
-          post.author=request.user
-          post=form.save()
-          return redirect ('/home')
-    else:
-     form=PostForm()
-    return render(request,'main/create_post.html',{'form':form})
-
+def like(request):
+    if request.method=='POST':
+        form=LikeForm(request.POST)
+        if form.is_valid():
+           like=form.save(commit=False)
+           post_id=request.POST.get('post-id')
+           like.post=Post.objects.filter(id=post_id).first()
+           like.author=request.user
+    return redirect('/home')

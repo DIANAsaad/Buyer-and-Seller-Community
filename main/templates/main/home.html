@@ -74,6 +74,18 @@
             <button class="btn btn-more-comments">View More Comments</button>
             {% endif %}
         </div>
+
+
+        <!-- Like Section-->
+        <div class="like-section">
+            <form action="\like" method="POST">
+              {% csrf_token %}
+              <input type="hidden" name="post-id" value="{{ post.id }}">
+              <button type="submit" class="btn btn-icon">
+                <i class="fas fa-thumbs-up"></i>
+              </button>
+            </form>
+          </div>
     </div>  
     {% empty %}
     <p class="no-art">No artworks available yet. Join us and share your creations!</p>
