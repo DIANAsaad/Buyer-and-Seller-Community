@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.shortcuts import HttpResponse
-from main.forms import RegisterForm, PostForm, CommentForm, LikeForm
+from main.forms import RegisterForm, PostForm, CommentForm
 from django.contrib.auth import get_user,login, authenticate
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import logout as logout
@@ -88,10 +88,10 @@ def ban(request):
 @login_required(login_url='/login')
 def like(request):
     if request.method=='POST':
-        form=LikeForm(request.POST)
-        if form.is_valid():
-           like=form.save(commit=False)
            post_id=request.POST.get('post-id')
-           like.post=Post.objects.filter(id=post_id).first()
-           like.author=request.user
+           post=Post.objects.filter(id=post_id).first()
+           liker=request.user
+           like, created= Like.objects.get_or_create(liker,post)
+           if not created: 
+              like.delete()
     return redirect('/home')

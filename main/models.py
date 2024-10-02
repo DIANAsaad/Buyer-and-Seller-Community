@@ -19,8 +19,8 @@ class Comment(models.Model):
 
 class Like(models.Model):
     post=models.ForeignKey(Post,on_delete=models.CASCADE)
-    author=models.ForeignKey(User,on_delete=models.CASCADE)
+    liker=models.ForeignKey(User,on_delete=models.CASCADE)
     liked_on = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('post', 'author') 
+        unique_together = ('post', 'liker') 
