@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.shortcuts import HttpResponse
+from django.http import JsonResponse
 from main.forms import RegisterForm, PostForm, CommentForm
 from django.contrib.auth import get_user,login, authenticate
 from django.contrib.auth.decorators import login_required, permission_required
@@ -17,7 +18,7 @@ def welcome(request):
 
 @login_required(login_url='/login')
 def home(request):
-   posts=Post.objects.prefetch_related('comment_set').all()
+   posts=Post.objects.prefetch_related('comment_set','like_set').all()
    if request.method=="POST":
       post_id=request.POST.get("post-id")
       if post_id:
@@ -91,7 +92,8 @@ def like(request):
            post_id=request.POST.get('post-id')
            post=Post.objects.filter(id=post_id).first()
            liker=request.user
-           like, created= Like.objects.get_or_create(liker,post)
+           like, created= Like.objects.get_or_create(post=post,liker=liker)
+           like.save()
            if not created: 
-              like.delete()
+               like.delete()
     return redirect('/home')

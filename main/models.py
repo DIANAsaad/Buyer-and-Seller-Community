@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 # Create your models here.
 
 
@@ -20,7 +21,7 @@ class Comment(models.Model):
 class Like(models.Model):
     post=models.ForeignKey(Post,on_delete=models.CASCADE)
     liker=models.ForeignKey(User,on_delete=models.CASCADE)
-    liked_on = models.DateTimeField(auto_now_add=True)
+    liked_on = models.DateTimeField(default=timezone.now)
 
     class Meta:
         unique_together = ('post', 'liker') 

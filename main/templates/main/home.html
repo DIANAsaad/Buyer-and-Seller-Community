@@ -26,18 +26,33 @@
             <p class="art-description">{{ post.description }}</p>
         </div>
         <div class="art-card-footer">
-            <button class="btn-icon btn-primary">
-                <i class="fas fa-heart"></i>
-            </button>
+            <div class="like-section"> 
+                <form action="/like" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="post-id" value="{{ post.id }}">
+                    {% if post.is_liked_by_user %}
+                    <button type="submit" class="btn-icon btn-primary" title="Unlike">
+                        <i class="fas fa-heart liked"></i>
+                    </button>
+                   {% else %}
+                    <button type="submit" class="btn-icon btn-primary" title="Like">
+                        <i class="fas fa-heart"></i>
+                    </button>
+                    {% endif %}
+                </form>
+            </div>
+
             <button class="btn-icon btn-secondary">
                 <i class="fas fa-comment"></i>
             </button>
+
             {% if user == post.author or perms.main.delete_post %}
             <form method="post">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-danger" name="post-id" value="{{ post.id }}">Delete</button>
             </form>
             {% endif %}
+
             {% if user.is_staff %}
             <form action="/ban" method="post" onsubmit="return confirm('Are you sure you want to ban this user?');">
                 {% csrf_token %}
@@ -74,18 +89,6 @@
             <button class="btn btn-more-comments">View More Comments</button>
             {% endif %}
         </div>
-
-
-        <!-- Like Section-->
-        <div class="like-section">
-            <form action="\like" method="POST">
-              {% csrf_token %}
-              <input type="hidden" name="post-id" value="{{ post.id }}">
-              <button type="submit" class="btn btn-icon">
-                <i class="fas fa-thumbs-up"></i>
-              </button>
-            </form>
-          </div>
     </div>  
     {% empty %}
     <p class="no-art">No artworks available yet. Join us and share your creations!</p>
@@ -204,6 +207,15 @@
         font-size: 20px; /* Adjust size as needed */
     }
 
+    .btn-icon i {
+        color: rgb(168, 111, 37); /* Default color */
+        transition: color 0.3s;
+    }
+
+    .btn-icon i.liked {
+        color: red; /* Color when liked */
+    }
+
     .btn-icon:hover {
         color: #0056b3; /* Change color on hover */
     }
@@ -293,5 +305,9 @@
         color: #777;
         margin: 10px;
     }
+
+    .btn-icon i.liked {
+    color: red; /* Change color when liked */
+}
 </style>
 {% endblock %}
