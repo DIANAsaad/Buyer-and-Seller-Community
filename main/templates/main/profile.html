@@ -1,0 +1,80 @@
+{% extends 'main/base.html' %}
+{% block title %}{{ user.username }}'s Profile{% endblock %}
+{% load crispy_forms_tags %}
+{% block content %}
+<form method="post">
+    {%csrf_token%}{{form|crispy}}
+    <button type="submit" class="btn btn_success">Profile</button> 
+</form>
+
+<div class="profile-container">
+    <div class="profile-header">
+        <div class="profile-picture">
+            <img src="{{ user.profile.profile_image_url }}" alt="{{ user.username }}'s Profile Picture">
+        </div>
+        <div class="profile-info">
+            <h2>{{ user.username }}</h2>
+            <p>{{ user.profile.post_set.count }} Posts</p>
+            <!-- You can add more user info here, like followers, following, etc. -->
+        </div>
+    </div>
+
+    <div class="posts-section">
+        {% for post in user.profile.post_set.all %}
+        <div class="post">
+            <img src="{{ post.image.url }}"  class="post-image">
+            <div class="post-content">{{ post.content }}</div>
+        </div>
+        {% empty %}
+        <p>No posts yet.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .profile-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .profile-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .profile-picture {
+        width: 80px; /* Change size as needed */
+        height: 80px; /* Change size as needed */
+        border-radius: 50%;
+        overflow: hidden;
+        margin-right: 20px;
+    }
+    .profile-picture img {
+        width: 100%;
+        height: auto;
+    }
+    .profile-info h2 {
+        margin: 0;
+        font-size: 24px;
+    }
+    .posts-section {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .post {
+        width: calc(33.333% - 10px); /* Three posts per row */
+        position: relative;
+    }
+    .post-image {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+    }
+    .post-caption {
+        margin-top: 5px;
+        font-size: 14px;
+    }
+</style>
+
+{% endblock %}

@@ -26,6 +26,7 @@
             <p class="art-description">{{ post.description }}</p>
         </div>
         <div class="art-card-footer">
+           
             <div class="like-section"> 
                 <form action="/like" method="POST">
                     {% csrf_token %}
@@ -34,13 +35,15 @@
                     <button type="submit" class="btn-icon btn-primary" title="Unlike">
                         <i class="fas fa-heart liked"></i>
                     </button>
-                   {% else %}
+                    {% else %}
                     <button type="submit" class="btn-icon btn-primary" title="Like">
                         <i class="fas fa-heart"></i>
                     </button>
                     {% endif %}
                 </form>
+                <span class="like-count">{{ post.like_set.count }} {{ post.like_set.count|pluralize:"like,likes" }}</span>
             </div>
+            
 
             <button class="btn-icon btn-secondary">
                 <i class="fas fa-comment"></i>
@@ -52,6 +55,7 @@
                 <button type="submit" class="btn btn-danger" name="post-id" value="{{ post.id }}">Delete</button>
             </form>
             {% endif %}
+
 
             {% if user.is_staff %}
             <form action="/ban" method="post" onsubmit="return confirm('Are you sure you want to ban this user?');">
@@ -68,17 +72,30 @@
                 {% csrf_token %}
                 <div class="comment-input-container">
                     <textarea name="content" class="comment-box" placeholder="Add a comment..." required></textarea>
-                    <button type="submit" class="btn btn-comment">Post Comment</button>
+                    <button type="submit" class="btn btn-comment">Add</button>
                 </div>
                 <input type="hidden" name="post-id" value="{{ post.id }}">
             </form>
             
             <div class="comments-display">
                 {% for comment in post.comment_set.all|slice:":2" %}
-                <div class="comment">
+                <div class="comment" style="position: relative; margin-bottom: 10px;">
                     <strong>{{ comment.author.username }}</strong>:
                     <span>{{ comment.content }}</span>
                     <span class="comment-timestamp">{{ comment.timestamp|date:"F j, Y, g:i a" }}</span>
+            
+                    {% if user == comment.author or perms.main.delete_comment %}
+                    <form method="post" action= "/delete_comment" style="display: inline; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
+                        {% csrf_token %}
+                        <button type="submit" 
+                                class="btn btn-link text-danger" 
+                                name="comment-id" 
+                                value="{{ comment.id }}" 
+                                style="padding: 0; border: none; background: transparent; text-decoration: none;">
+                            Delete
+                        </button>
+                    </form>
+                    {% endif %}
                 </div>
                 {% empty %}
                 <p>No comments yet. Be the first to comment!</p>
@@ -88,8 +105,7 @@
             {% if post.comment_set.count > 2 %}
             <button class="btn btn-more-comments">View More Comments</button>
             {% endif %}
-        </div>
-    </div>  
+            
     {% empty %}
     <p class="no-art">No artworks available yet. Join us and share your creations!</p>
     {% endfor %}

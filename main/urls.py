@@ -12,4 +12,6 @@ urlpatterns=[
     path('ban',views.ban),
     path('add_comment',views.add_comment),
     path('like',views.like, name='like'),
+    path('delete_comment', views.delete_comment),
+    path('profile', views.profile),
             ]
