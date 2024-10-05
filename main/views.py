@@ -25,7 +25,8 @@ def home(request):
          post=Post.objects.filter(id=post_id).first()
          if post and (post.author==request.user or request.user.has_perm("main.delete_post")):
             post.delete()    
- 
+   for post in posts:
+      post.is_liked_by_user = Like.objects.filter(post=post, liker=request.user).exists()
    return render(request,'main/home.html',{'posts':posts})  
 
 def sign_up(request):
