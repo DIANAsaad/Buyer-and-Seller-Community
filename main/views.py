@@ -5,7 +5,7 @@ from main.forms import RegisterForm, PostForm, CommentForm, ProfilForm
 from django.contrib.auth import get_user,login, authenticate
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import logout as logout
-from main.models import Post, Comment, Like
+from main.models import Post, Comment, Like, Profile
 from django.contrib.auth.models import User, Group
 from django.contrib import messages
 # Create your views here.
@@ -72,7 +72,7 @@ def add_comment(request):
          post_id=request.POST.get('post-id')
          comment.post=Post.objects.get(id=post_id)
          comment.author=request.user
-         comment.save()  
+         comment=form.save()  
    
        else:
           form=CommentForm() 
@@ -104,17 +104,25 @@ def like(request):
     return redirect('/home')
 
 
-
-def profile(request):
+@login_required(login_url='/login')
+def create_profile(request):
    if request.method=="POST":
       form=ProfilForm(request.POST)
       if form.is_valid():
          profile=form.save(commit=False)
-         profile.user=request.user
-         profile.save()
-      else:
+         profile.owner=request.user
+         profile=form.save()
+         return redirect ('/profile')
+   else:
           form=ProfilForm()
-   return render(request,"main/profile.html",{"profile":profile})
+   return render(request,"main/create_profile.html",{"form":form})
+
+def profile(request):
+   profiles=Profile.objects.all()
+   for profile in profiles:
+      profile.is_created = Profile.objects.filter(owner=request.user).exists()
+      return render(request,"main/profile.html",{"profile":profile})
+
 
 @login_required(login_url='/login')
 def ban(request):

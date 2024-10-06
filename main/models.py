@@ -28,9 +28,6 @@ class Like(models.Model):
 
 
 class Profile(models.Model):
-    post=models.ForeignKey(Post,on_delete=models.CASCADE)
-    user=models.ForeignKey(User,on_delete=models.CASCADE)
+    owner=models.ForeignKey(User,on_delete=models.CASCADE)
     profile_image_url=models.CharField(max_length=2083)
     bio=models.CharField(max_length=2083)
-    friends=models.IntegerField()
-    following=models.IntegerField()

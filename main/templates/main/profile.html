@@ -1,80 +1,146 @@
 {% extends 'main/base.html' %}
-{% block title %}{{ user.username }}'s Profile{% endblock %}
+{% block title %}Profile{% endblock %}
 {% load crispy_forms_tags %}
 {% block content %}
-<form method="post">
-    {%csrf_token%}{{form|crispy}}
-    <button type="submit" class="btn btn_success">Profile</button> 
-</form>
-
 <div class="profile-container">
+    
     <div class="profile-header">
-        <div class="profile-picture">
-            <img src="{{ user.profile.profile_image_url }}" alt="{{ user.username }}'s Profile Picture">
+        <div class="profile-image">
+            <img src="{{profile.profile_image_url }}" alt="{{ user.username }}'s Profile Picture">
         </div>
         <div class="profile-info">
-            <h2>{{ user.username }}</h2>
-            <p>{{ user.profile.post_set.count }} Posts</p>
-            <!-- You can add more user info here, like followers, following, etc. -->
+            <h2>{{ profile.owner }}</h2>
+            <p class="bio">{{ profile.bio }}</p>
         </div>
     </div>
 
-    <div class="posts-section">
-        {% for post in user.profile.post_set.all %}
-        <div class="post">
-            <img src="{{ post.image.url }}"  class="post-image">
-            <div class="post-content">{{ post.content }}</div>
+    <div class="posts-container">
+        <h3>{{ profile.owner }}'s Posts</h3>
+        <div class="gallery-container">
+            {% for post in profile.owner.post_set.all %}
+            <div class="art-card">
+                <div class="image-wrapper">
+                    <img src="{{ post.image_url }}" alt="{{ post.title }}">
+                </div>
+                <div class="art-card-body">
+                    <h4 class="art-title">{{ post.title }}</h4>
+                    <p class="art-description">{{ post.description }}</p>
+                </div>
+                <div class="art-card-footer">
+                    <span class="like-count">{{ post.like_set.count }} {{ post.like_set.count|pluralize:"like,likes" }}</span>
+                </div>
+            </div>
+            {% empty %}
+            <p>No posts available.</p>
+            {% endfor %}
+
         </div>
-        {% empty %}
-        <p>No posts yet.</p>
-        {% endfor %}
     </div>
 </div>
 
+{% endblock %}
+
+{% block extra_css %}
 <style>
+    /* Profile Styles */
     .profile-container {
         max-width: 800px;
-        margin: 0 auto;
+        margin: 20px auto;
         padding: 20px;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
+
     .profile-header {
         display: flex;
         align-items: center;
         margin-bottom: 20px;
     }
-    .profile-picture {
-        width: 80px; /* Change size as needed */
-        height: 80px; /* Change size as needed */
+
+    .profile-image {
+        flex: 0 0 100px; /* Fixed size for the profile image */
+        height: 100px;
         border-radius: 50%;
         overflow: hidden;
         margin-right: 20px;
+        border: 3px solid #f4f4f9; /* Optional border */
     }
-    .profile-picture img {
+
+    .profile-image img {
         width: 100%;
         height: auto;
+        display: block;
     }
+
     .profile-info h2 {
         margin: 0;
         font-size: 24px;
+        color: #333;
     }
-    .posts-section {
+
+    .bio {
+        font-size: 16px;
+        color: #777;
+        margin-top: 5px;
+    }
+
+    .posts-container {
+        margin-top: 20px;
+    }
+
+    .gallery-container {
         display: flex;
         flex-wrap: wrap;
-        gap: 10px;
+        justify-content: space-between;
     }
-    .post {
-        width: calc(33.333% - 10px); /* Three posts per row */
-        position: relative;
+
+    .art-card {
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        max-width: 48%; /* Adjust width to fit two cards in a row */
+        margin-bottom: 20px;
+        transition: transform 0.3s ease;
     }
-    .post-image {
+
+    .art-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .image-wrapper {
+        height: 200px; /* Fixed height for the image */
+        overflow: hidden;
+    }
+
+    .art-card img {
         width: 100%;
-        height: auto;
-        border-radius: 8px;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
     }
-    .post-caption {
-        margin-top: 5px;
+
+    .art-card-body {
+        padding: 15px;
+    }
+
+    .art-title {
+        font-size: 18px;
+        color: #2a2a2a;
+        margin: 0;
+    }
+
+    .art-description {
         font-size: 14px;
+        color: #555;
+    }
+
+    .art-card-footer {
+        padding: 10px 15px;
+        background-color: #f9f9f9;
+        border-top: 1px solid #eee;
+        text-align: right; /* Align the like count to the right */
     }
 </style>
-
 {% endblock %}
