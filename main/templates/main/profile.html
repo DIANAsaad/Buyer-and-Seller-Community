@@ -57,6 +57,12 @@
         margin-top: 20px;
     }
 
+    .posts-header {
+        margin-bottom: 10px; /* Space below the header */
+        padding-bottom: 5px; /* Space for the border */
+        border-bottom: 2px solid #ddd; /* Small border */
+    }
+
     .gallery-container {
         display: flex;
         flex-wrap: wrap;
@@ -129,7 +135,7 @@
     </div>
 
     <div class="posts-container">
-        <h3>{{ profile.owner }}'s Posts</h3>
+        <h3 class="posts-header">My Posts</h3>
         <div class="gallery-container">
             {% for post in profile.owner.post_set.all %}
             <div class="art-card">
@@ -142,6 +148,7 @@
                 </div>
                 <div class="art-card-footer">
                     <span class="like-count">{{ post.like_set.count }} {{ post.like_set.count|pluralize:"like,likes" }}</span>
+                    <span class="like-count">{{ post.comment_set.count }} {{ post.comment_set.count|pluralize:"comment,comments" }}</span>
                 </div>
             </div>
             {% empty %}
@@ -151,3 +158,4 @@
     </div>
 </div>
 {% endblock %}
+
