@@ -27,7 +27,7 @@ def home(request):
             post.delete()   
    for post in posts:
       post.is_liked_by_user = Like.objects.filter(post=post, liker=request.user).exists()
-      
+      request.user.has_created_profile = Profile.objects.filter(owner=request.user).exists()
    return render(request,'main/home.html',{'posts':posts})  
 
 def sign_up(request):
@@ -118,10 +118,9 @@ def create_profile(request):
    return render(request,"main/create_profile.html",{"form":form})
 
 def profile(request):
-   profiles=Profile.objects.all()
-   for profile in profiles:
-      profile.is_created = Profile.objects.filter(owner=request.user).exists()
-      return render(request,"main/profile.html",{"profile":profile})
+   profile=Profile.objects.filter(owner=request.user).first()
+   request.user.has_created_profile = Profile.objects.filter(owner=request.user).exists()
+   return render(request,"main/profile.html",{"profile":profile})
 
 
 @login_required(login_url='/login')

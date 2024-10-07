@@ -1,48 +1,16 @@
 {% extends 'main/base.html' %}
 {% block title %}Profile{% endblock %}
 {% load crispy_forms_tags %}
-{% block content %}
-<div class="profile-container">
-    
-    <div class="profile-header">
-        <div class="profile-image">
-            <img src="{{profile.profile_image_url }}" alt="{{ user.username }}'s Profile Picture">
-        </div>
-        <div class="profile-info">
-            <h2>{{ profile.owner }}</h2>
-            <p class="bio">{{ profile.bio }}</p>
-        </div>
-    </div>
-
-    <div class="posts-container">
-        <h3>{{ profile.owner }}'s Posts</h3>
-        <div class="gallery-container">
-            {% for post in profile.owner.post_set.all %}
-            <div class="art-card">
-                <div class="image-wrapper">
-                    <img src="{{ post.image_url }}" alt="{{ post.title }}">
-                </div>
-                <div class="art-card-body">
-                    <h4 class="art-title">{{ post.title }}</h4>
-                    <p class="art-description">{{ post.description }}</p>
-                </div>
-                <div class="art-card-footer">
-                    <span class="like-count">{{ post.like_set.count }} {{ post.like_set.count|pluralize:"like,likes" }}</span>
-                </div>
-            </div>
-            {% empty %}
-            <p>No posts available.</p>
-            {% endfor %}
-
-        </div>
-    </div>
-</div>
-
-{% endblock %}
 
 {% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=Bitter:wght@400;700&display=swap" rel="stylesheet">
 <style>
     /* Profile Styles */
+    
+    body {
+        font-family: 'Lora', serif; /* Add Lora font for body */
+    }
+
     .profile-container {
         max-width: 800px;
         margin: 20px auto;
@@ -92,25 +60,27 @@
     .gallery-container {
         display: flex;
         flex-wrap: wrap;
-        justify-content: space-between;
+        justify-content: flex-start; /* Align items to the left */
+        gap: 15px; /* Space between cards */
     }
 
     .art-card {
         background: #fff;
-        border-radius: 12px;
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-        max-width: 48%; /* Adjust width to fit two cards in a row */
+        border-radius: 8px; /* Reduced border-radius */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        width: calc(45% - 15px); /* Adjust width to fit two cards in a row */
         margin-bottom: 20px;
         transition: transform 0.3s ease;
+        overflow: hidden; /* Ensure content fits well */
     }
 
     .art-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
     }
 
     .image-wrapper {
-        height: 200px; /* Fixed height for the image */
+        height: 75%; /* Set height to 75% of the card */
         overflow: hidden;
     }
 
@@ -122,25 +92,62 @@
     }
 
     .art-card-body {
-        padding: 15px;
+        padding: 10px; /* Reduced padding */
     }
 
     .art-title {
-        font-size: 18px;
+        font-size: 16px; /* Smaller title font size */
         color: #2a2a2a;
         margin: 0;
     }
 
     .art-description {
-        font-size: 14px;
+        font-size: 12px; /* Smaller description font size */
         color: #555;
     }
 
     .art-card-footer {
-        padding: 10px 15px;
+        padding: 5px 10px; /* Reduced padding */
         background-color: #f9f9f9;
         border-top: 1px solid #eee;
         text-align: right; /* Align the like count to the right */
     }
 </style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    
+    <div class="profile-header">
+        <div class="profile-image">
+            <img src="{{ profile.profile_image_url }}" alt="{{ user.username }}'s Profile Picture">
+        </div>
+        <div class="profile-info">
+            <h2>{{ profile.owner }}</h2>
+            <p class="bio">{{ profile.bio }}</p>
+        </div>
+    </div>
+
+    <div class="posts-container">
+        <h3>{{ profile.owner }}'s Posts</h3>
+        <div class="gallery-container">
+            {% for post in profile.owner.post_set.all %}
+            <div class="art-card">
+                <div class="image-wrapper">
+                    <img src="{{ post.image_url }}" alt="{{ post.title }}">
+                </div>
+                <div class="art-card-body">
+                    <h4 class="art-title">{{ post.title }}</h4>
+                    <p class="art-description">{{ post.description }}</p>
+                </div>
+                <div class="art-card-footer">
+                    <span class="like-count">{{ post.like_set.count }} {{ post.like_set.count|pluralize:"like,likes" }}</span>
+                </div>
+            </div>
+            {% empty %}
+            <p>No posts available.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
 {% endblock %}
