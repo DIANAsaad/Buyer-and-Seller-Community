@@ -67,7 +67,7 @@
 
         <div class="art-card-body">
             <h3 class="artist-info">
-                <a href="/profile/{{ post.author.username }}">{{ post.author.username }}:</a>
+                <a href="/profile/{{ post.author.username}}" class="black-link">{{ post.author.username }}:</a>
                 <span class="art-description">{{ post.description }}</span>
             </h3>
         </div>
@@ -78,7 +78,7 @@
                     {% csrf_token %}
                     <div class="comment-input-container">
                         <textarea name="content" class="comment-box" placeholder="Add a comment..." required></textarea>
-                        <button type="submit" class="btn btn-comment">Add</button>
+                        <button type="submit" class="btn-comment">Add</button>
                     </div>
                     <input type="hidden" name="post-id" value="{{ post.id }}">
                 </form>
@@ -91,7 +91,7 @@
                         <span class="comment-timestamp">{{ comment.timestamp|date:"F j, Y, g:i a" }}</span>
 
                         {% if user == comment.author or perms.main.delete_comment %}
-                        <form method="post" action="/delete_comment" style="display: inline; position: absolute; right: 0; top: 50%; transform: translateY(-50%);">
+                        <form method="post" action="/delete_comment" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);">
                             {% csrf_token %}
                             <button type="submit" 
                                     class="btn btn-link text-danger" 
@@ -215,6 +215,15 @@
         color: #2a2a2a;
     }
 
+    .black-link {
+        color: black;
+        text-decoration: none;
+    }
+
+    .black-link:hover {
+        text-decoration: underline;
+    }
+
     .art-description {
         font-size: 14px;
         color: #777;
@@ -234,98 +243,105 @@
         flex-wrap: nowrap; 
     }
 
-    /* Button Styles */
     .btn-icon, .comment-button {
-        background-color: white; /* White background */
-        color: red; /* Red text color */
-        border: 2px solid red; /* Red contour */
-        border-radius: 5px; /* Rounded corners */
-        padding: 5px 10px; /* Padding for buttons */
-        cursor: pointer; /* Pointer cursor on hover */
-        transition: background-color 0.3s, color 0.3s; /* Smooth transition */
-    }
-
-    .btn-icon:hover, .comment-button:hover {
-        background-color: rgb(168, 114, 52); /* Change background to red on hover */
-        color: white; /* Change text color to white on hover */
-    }
-
-    .liked {
-        color: rgb(128, 56, 56); /* Change color for liked state */
-    }
-
-    .like-count {
-        margin-left: 8px;
-        font-size: 14px;
-        color: #555;
-    }
-
-    .comment-section {
-        padding: 10px;
-        border-top: 1px solid #eee;
-        background: white; /* White background */
-    }
-
-    .comment-form {
-        display: flex;
-        flex-direction: column;
-        margin-bottom: 10px;
-    }
-
-    .comment-box {
-        width: 100%;
-        padding: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        margin-bottom: 10px;
-        font-size: 14px;
-        resize: none;
-    }
-
-    .btn-comment {
-        align-self: flex-end;
-        padding: 5px 15px;
-        background-color: rgb(202, 138, 66); /* Button color */
-        color: white; /* Button text color */
+        background-color: white; 
+        color: rgb(207, 93, 45);
         border: none;
+
+        padding: 5px 10px; 
+        cursor: pointer; 
+    }
+
+    .btn-icon i, .comment-button i {
+        font-size: 1.5rem; 
+    }
+
+    .btn-icon.liked {
+        color: rgb(207, 93, 45);
+        border-color: none;
+    }
+
+    .btn-delete {
+        background-color: transparent;
+        color: #dc3545;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-ban {
+        background-color: #e74c3c;
+        color: white;
+        border: none;
+        padding: 5px;
         border-radius: 5px;
         cursor: pointer;
     }
 
-    .btn-comment:hover {
-        background-color: trans; /* Darker red on hover */
+    .like-section {
+        display: flex;
+        align-items: center;
+    }
+
+    .like-count {
+        margin-left: 5px;
+        font-size: 14px;
+        color: #555;
+    }
+
+    /* Comment Section Styles */
+    .comment-section {
+        padding: 10px;
+    }
+
+    .comments-container {
+        margin-top: 10px;
     }
 
     .comment {
-        padding: 5px;
-        margin-bottom: 5px;
-        display: flex;
-        justify-content: space-between;
-        background: white; /* White background for comments */
-        border: transparent; /* Red contour */
-        border-radius: 5px; /* Rounded corners */
+        background-color: #f9f9f9;
+        border-radius: 5px;
+        padding: 10px;
+        margin-bottom: 10px;
     }
 
     .comment-timestamp {
         font-size: 12px;
-        color: #aaa;
+        color: #888;
     }
 
-    .btn-delete, .btn-ban {
-        background: transparent;
+    /* Comment Input Styling */
+    .comment-input-container {
+        display: flex;
+        align-items: center;
+        width: 100%;
+    }
+
+    .comment-box {
+        flex-grow: 1;
+        margin-right: 10px;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        resize: none;
+        height: 40px; /* Adjust height as needed */
+        width: 100%;
+        font-size: 14px;
+        font-family: 'Lora', serif;
+    }
+
+    .btn-comment {
+        padding: 8px 12px;
+        background-color: ;
+        color: white;
         border: none;
-        color: red; 
+        border-radius: 4px;
         cursor: pointer;
+        font-size: 14px;
+        height: 40px; /* Match the height of the textarea */
     }
 
-    .btn-delete:hover, .btn-ban:hover {
-        text-decoration: underline;
+    .btn-comment:hover {
+        background-color: rgb(207, 93, 45);
     }
-
-    .no-art {
-        color: #555;
-        font-size: 16px;
-    }
-
 </style>
 {% endblock %}
