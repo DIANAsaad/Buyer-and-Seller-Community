@@ -117,9 +117,12 @@ def create_profile(request):
           form=ProfilForm()
    return render(request,"main/create_profile.html",{"form":form})
 
-def profile(request):
-   profile=Profile.objects.filter(owner=request.user).first()
+def profile(request, username):
    request.user.has_created_profile = Profile.objects.filter(owner=request.user).exists()
+   if request.user.username==username:
+       profile=Profile.objects.filter(owner=request.user).first()
+   else:
+       profile=Profile.objects.filter(owner=username).first()
    return render(request,"main/profile.html",{"profile":profile})
 
 

@@ -10,7 +10,7 @@
             color: white;
             font-family: 'Dancing Script', cursive; 
             font-size: 36px;
-            margin-bottom: 10px; /* Add margin for spacing */
+            margin-bottom: 10px;
         }
     </style>
     <h1 class="white-text">Art Community Gallery</h1>
@@ -20,21 +20,20 @@
     {% for post in posts %}
     <div class="art-card" id="art-card-{{ post.id }}">
         <div class="image-wrapper">
-            <img src="{{ post.image_url }}" alt="{{ post.title }}">
+            <img src="{{ post.image_url }}">
         </div>
 
-        <!-- Moved the footer section above the art-card-body -->
         <div class="art-card-footer">
             <div class="like-section"> 
                 <form action="/like" method="POST">
                     {% csrf_token %}
                     <input type="hidden" name="post-id" value="{{ post.id }}">
                     {% if post.is_liked_by_user %}
-                    <button type="submit" class="btn-icon btn-primary" title="Unlike">
-                        <i class="fas fa-heart liked"></i>
+                    <button type="submit" class="btn-icon liked" title="Unlike">
+                        <i class="fas fa-heart"></i>
                     </button>
                     {% else %}
-                    <button type="submit" class="btn-icon btn-primary" title="Like">
+                    <button type="submit" class="btn-icon" title="Like">
                         <i class="fas fa-heart"></i>
                     </button>
                     {% endif %}
@@ -42,12 +41,10 @@
                 <span class="like-count">{{ post.like_set.count }} {{ post.like_set.count|pluralize:"like,likes" }}</span>
             </div>
             
-            <!-- Comment Button linked to the comment section -->
-            <button class="btn-icon btn-secondary" onclick="{{toggleComments(post.id )}}">
+            <button class="btn-icon comment-button" onclick="toggleComments({{post.id }})">
                 <i class="fas fa-comment"></i>
             </button>
 
-            <!-- Delete Button -->
             {% if user == post.author or perms.main.delete_post %}
             <form method="post" style="display: inline;">
                 {% csrf_token %}
@@ -57,7 +54,6 @@
             </form>
             {% endif %}
             
-            <!-- Ban Button -->
             {% if user.is_staff %}
             <form action="/ban" method="post" onsubmit="return confirm('Are you sure you want to ban this user?');" style="display: inline;">
                 {% csrf_token %}
@@ -71,12 +67,11 @@
 
         <div class="art-card-body">
             <h3 class="artist-info">
-                <span class="artist-name">{{ post.author.username }}:</span>
+                <a href="/profile/{{ post.author.username }}">{{ post.author.username }}:</a>
                 <span class="art-description">{{ post.description }}</span>
             </h3>
         </div>
 
-        <!-- Comment Section -->
         <div class="comment-section" id="comment-section-{{ post.id }}" style="display: none;">
             <div class="comments-container">
                 <form method="post" action="/add_comment" class="comment-form">
@@ -130,7 +125,7 @@
             artCard.style.height = "auto"; // Expand the art card to fit comments
         } else {
             commentsSection.style.display = "none"; // Hide comments
-            artCard.style.height = "600px"; // Collapse the art card back to original height
+            artCard.style.height = "605px"; // Collapse the art card back to original height
         }
     }
 </script>
@@ -180,7 +175,7 @@
         border-radius: 12px;
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
         width: 500px;
-        height: 600px;
+        height: 605px;
         transition: transform 0.3s ease, box-shadow 0.3s ease, height 0.3s ease;
         overflow: hidden;
         margin-bottom: 20px;
@@ -211,9 +206,10 @@
         height: auto; 
         padding: 10px;
         font-size: 14px;
+        margin-bottom: 20px;
     }
 
-    .artist-name {
+    .artist-info {
         font-size: 20px;
         font-weight: bold;
         color: #2a2a2a;
@@ -223,8 +219,8 @@
         font-size: 14px;
         color: #777;
         margin-top: 10px;
-        margin-bottom: 10px; /* Add margin for spacing */
-        line-height: 1;
+        margin-bottom: 10px; 
+        line-height: 1.5; 
     }
 
     .art-card-footer {
@@ -238,18 +234,24 @@
         flex-wrap: nowrap; 
     }
 
-    /* Like and Comment Button */
-    .btn-icon {
-        background: transparent;
-        border: none;
-        cursor: pointer;
-        padding: 5px;
-        font-size: 20px;
-        transition: color 0.3s;
+    /* Button Styles */
+    .btn-icon, .comment-button {
+        background-color: white; /* White background */
+        color: red; /* Red text color */
+        border: 2px solid red; /* Red contour */
+        border-radius: 5px; /* Rounded corners */
+        padding: 5px 10px; /* Padding for buttons */
+        cursor: pointer; /* Pointer cursor on hover */
+        transition: background-color 0.3s, color 0.3s; /* Smooth transition */
     }
 
-    .btn-icon:hover {
-        color: #007bff;
+    .btn-icon:hover, .comment-button:hover {
+        background-color: rgb(168, 114, 52); /* Change background to red on hover */
+        color: white; /* Change text color to white on hover */
+    }
+
+    .liked {
+        color: rgb(128, 56, 56); /* Change color for liked state */
     }
 
     .like-count {
@@ -261,6 +263,7 @@
     .comment-section {
         padding: 10px;
         border-top: 1px solid #eee;
+        background: white; /* White background */
     }
 
     .comment-form {
@@ -282,24 +285,25 @@
     .btn-comment {
         align-self: flex-end;
         padding: 5px 15px;
-        background-color: #28a745;
-        color: white;
+        background-color: rgb(202, 138, 66); /* Button color */
+        color: white; /* Button text color */
         border: none;
         border-radius: 5px;
         cursor: pointer;
     }
 
     .btn-comment:hover {
-        background-color: #218838;
+        background-color: trans; /* Darker red on hover */
     }
 
     .comment {
         padding: 5px;
-        background-color: #f1f1f1;
-        border-radius: 5px;
         margin-bottom: 5px;
         display: flex;
         justify-content: space-between;
+        background: white; /* White background for comments */
+        border: transparent; /* Red contour */
+        border-radius: 5px; /* Rounded corners */
     }
 
     .comment-timestamp {
