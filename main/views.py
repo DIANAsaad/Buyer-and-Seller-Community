@@ -119,11 +119,12 @@ def create_profile(request):
 
 def profile(request, username=None):
    request.user.has_created_profile = Profile.objects.filter(owner=request.user).exists()
-   if request.user.username==username:
+   if username==None:
        profile=Profile.objects.filter(owner=request.user).first()
    else:
-       user=User.objects.filter(username=username).first()
+       user=User.objects.filter(username=username).prefetch_related('post_set').first()
        profile=Profile.objects.filter(owner=user).first()
+
    return render(request,"main/profile.html",{"profile":profile})
 
 

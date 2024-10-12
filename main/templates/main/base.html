@@ -14,7 +14,7 @@
         <div class="container d-flex justify-content-between">
             <ul class="navbar-nav d-flex align-items-center flex-row">
                 {% if user.is_authenticated %}
-                    {% if request.path == '/profile' %}
+                    {% if request.path == '/profile/' %}
                     <li class="nav-item me-3">
                         <a class="nav-link text-white" href="/"> Home</a>
                     </li>
