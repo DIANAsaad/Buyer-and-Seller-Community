@@ -1,0 +1,137 @@
+<div class="art-card" id="art-card-{{ post.id }}">
+    <div class="image-wrapper">
+        <img src="{{ post.image_url }}">
+    </div>
+
+    <div class="art-card-footer">
+        <div class="like-section"> 
+            <form action="/like" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="post-id" value="{{ post.id }}">
+                {% if post.is_liked_by_user %}
+                    <button type="submit" class="btn-icon liked" title="Unlike">
+                        <i class="fas fa-heart"></i>
+                    </button>
+                {% else %}
+                    <button type="submit" class="btn-icon" title="Like">
+                        <i class="far fa-heart"></i>
+                    </button>
+                {% endif %}
+            </form>
+            <span class="like-count">{{ post.like_set.count }} {{ post.like_set.count|pluralize:"Like,Likes" }}</span>
+        </div>
+
+        <button class="btn-icon comment-button" onclick="toggleComments({{ post.id }})">
+            <i class="fas fa-comment"></i>
+        </button>
+        <span class="comment-count">{{ post.comment_set.count|pluralize:"Comment,Comments" }}</span>
+
+        {% if user == post.author or perms.main.delete_post %}
+            <form method="post" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-delete" name="post-id" value="{{ post.id }}">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </form>
+        {% endif %}
+
+        {% if user.is_staff %}
+            <form action="/ban" method="post" onsubmit="return confirm('Are you sure you want to ban this user?');" style="display: inline;">
+                {% csrf_token %}
+                <input type="hidden" name="user-id" value="{{ post.author_id }}">
+                <button type="submit" class="btn btn-ban">
+                    <i class="fas fa-ban"></i>
+                </button>
+            </form>
+        {% endif %}
+    </div>
+
+    <div class="art-card-body">
+        <h3 class="artist-info">
+            <a href="/profile/{{ post.author.username}}" class="black-link">{{ post.author.username }}:</a>
+            <span class="art-description">{{ post.description }}</span>
+        </h3>
+    </div>
+
+    {% include 'main/home_parts/comment_section.html' %}
+</div>
+
+{% block extra_css %}
+<style>
+/* Art Card Styles */
+.art-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    width: 500px;
+    height: 605px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, height 0.3s ease;
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+.art-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+.art-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+.art-card:hover img {
+    transform: scale(1.05);
+}
+.art-card-body {
+    height: auto; 
+    padding: 10px;
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+.artist-info {
+    font-size: 20px;
+    font-weight: bold;
+    color: #2a2a2a;
+}
+.art-description {
+    font-size: 14px;
+    color: #777;
+    margin-top: 10px;
+    margin-bottom: 10px; 
+    line-height: 1.5; 
+}
+
+/* Like Button Styles */
+.btn-icon, .comment-button {
+    background-color: #f9f9f9;
+    color:  rgb(173, 114, 55);
+    border: none;
+    padding: 5px 10px; 
+    cursor: pointer; 
+    align-items: center;
+}
+.btn-icon i, .comment-button i {
+    font-size: 1.5rem; 
+    margin-right: 5px;
+}
+.like-section {
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+}
+.like-count {
+    margin-left: 5px;
+    font-size: 14px;
+    color: #555;
+}
+.btn-icon.liked {
+    background-color: #f9f9f9;
+    color:  rgb(173, 114, 55);
+    border-color: transparent;
+}
+.btn-icon:not(.liked) i {
+    background-color: #f9f9f9;
+    color:  rgb(173, 114, 55); /* Empty heart color */
+}
+</style>
+{% endblock %}
