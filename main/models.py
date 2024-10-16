@@ -30,3 +30,9 @@ class Profile(models.Model):
     owner=models.ForeignKey(User,on_delete=models.CASCADE)
     profile_image_url=models.CharField(max_length=2083)
     bio=models.CharField(max_length=2083)
+
+class Notifications(models.Model):
+    engager=models.ForeignKey(User,on_delete=models.CASCADE)
+    message=models.TextField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)

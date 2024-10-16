@@ -5,7 +5,7 @@ from main.forms import RegisterForm, PostForm, CommentForm, ProfilForm
 from django.contrib.auth import get_user,login, authenticate
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import logout as logout
-from main.models import Post, Comment, Like, Profile
+from main.models import Post, Comment, Like, Profile, Notifications
 from django.contrib.auth.models import User, Group
 from django.contrib import messages
 # Create your views here.
@@ -138,3 +138,7 @@ def ban(request):
               group=Group.objects.filter(name='default').first()
               group.user_set.remove(user) 
       return redirect ('/home')
+
+def notification_panel(request):
+   notifications=Notifications.objects.filter(user=request.user).order_by('-created_at')
+   return render(request,'main/home_parts/notification_panel.html',{'notifications': notifications} )

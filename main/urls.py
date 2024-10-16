@@ -16,4 +16,5 @@ urlpatterns=[
     path('create_profile', views.create_profile),
     path('profile/', views.profile),
     path('profile/<str:username>', views.profile),
+    path('notification_panel', views.notification_panel),
             ] 
