@@ -19,6 +19,7 @@ def welcome(request):
 @login_required(login_url='/login')
 def home(request):
    posts=Post.objects.prefetch_related('comment_set','like_set').all()
+   notifications=Notifications.objects.filter(receiver=request.user).order_by('-created_at')
    if request.method=="POST":
       post_id=request.POST.get("post-id")
       if post_id:
@@ -28,7 +29,7 @@ def home(request):
    for post in posts:
       post.is_liked_by_user = Like.objects.filter(post=post, liker=request.user).exists()
       request.user.has_created_profile = Profile.objects.filter(owner=request.user).exists()
-   return render(request,'main/home.html',{'posts':posts})  
+   return render(request,'main/home.html',{'posts':posts, 'notifications':notifications})  
 
 def sign_up(request):
    if request.method=='POST':
@@ -40,6 +41,14 @@ def sign_up(request):
    else:
       form=RegisterForm()
    return render(request,'registration/sign_up.html',{'form': form})
+
+def read_notifications(request):
+   notifications=Notifications.objects.filter(receiver=request.user).all()
+   notifications.is_not_read=notifications.filter(is_read=False)
+   if not notifications.is_not_read:
+      notifications.filter(is_read=True)
+   return JsonResponse({'status': 'success', 'message': 'Notifications marked as read'})
+
 
 def user_logout(request):
    logout(request)
@@ -139,6 +148,3 @@ def ban(request):
               group.user_set.remove(user) 
       return redirect ('/home')
 
-def notification_panel(request):
-   notifications=Notifications.objects.filter(user=request.user).order_by('-created_at')
-   return render(request,'main/home_parts/notification_panel.html',{'notifications': notifications} )

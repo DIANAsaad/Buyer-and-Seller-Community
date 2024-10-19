@@ -9,12 +9,11 @@ def create_comment_notification(sender,instance,created,**kwargs):
     author=instance.author
     post=instance.post
     post_owner=post.author
-    user=User.objects.filter(id=post_owner.id).first()
     if created:
         comment_notification= Notifications.objects.create(
         message=f"{instance.author} commented on your post!",
         engager_id=author.id,
-        receiver_id=user.id,
+        receiver=post_owner,
         )
         comment_notification.save()
 
@@ -23,13 +22,12 @@ def create_comment_notification(sender,instance,created,**kwargs):
 def create_like_notification(sender,instance,created,**kwargs):
     liker=instance.liker
     post=instance.post
-    post_owner = post.author
-    user=User.objects.filter(id=post_owner.id).first()
+    post_owner=post.author
     if created:
         like_notification= Notifications.objects.create(
-        message=f"{instance.liker} Liked your post!",
+        message=f"{instance.liker} liked your post!",
         engager_id=liker.id,
-        receiver_id=user.id
+        receiver=post_owner,
         )
         like_notification.save()
 

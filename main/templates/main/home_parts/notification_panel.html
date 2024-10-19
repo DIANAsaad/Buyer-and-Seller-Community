@@ -6,10 +6,10 @@
     <div class="panel-content">
         <h4>Notifications</h4>
         <ul>
-            {% for notification in notifications %}
+            {% for notification in notifications%}
             <li>
                 {{ notification.message }} - {{ notification.created_at }}
-                {% if not notification.is_read %}
+                {% if notification.is_not_read %}
                     <strong>(New)</strong>
                 {% endif %}
             </li>
@@ -17,3 +17,102 @@
         </ul>
     </div>
 </div>
+
+<script>
+   function togglePanel() {
+    const panel = document.getElementById('notificationPanel');
+    
+    if (!panel) {
+        console.error('Notification panel not found');
+        return;
+    }
+
+    panel.classList.toggle('open'); // Toggles the 'open' class to show/hide the panel
+
+    // If the panel is opened, mark notifications as read
+    if (panel.classList.contains('open')) {
+        fetch("/read_notifications", {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}', // Make sure to render the CSRF token correctly
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(data.message);
+            // Optionally, you can update the UI to remove the "New" label after marking as read
+        })
+        .catch(error => console.error('Error:', error));
+    }
+}
+
+</script>
+
+{% block extra_css %}
+<style>
+.notification-button {
+    position: fixed;
+    right: 0; /* Position to the far right */
+    top: 50%; /* Vertically center */
+    transform: translateY(-50%);
+    background-color: #e0e0e0; /* Gray background */
+    border: none;
+    border-radius: 50%;
+    padding: 15px;
+    cursor: pointer;
+    z-index: 1000; /* Make sure it's above other elements */
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.notification-button i {
+    font-size: 24px;
+    color: rgb(173, 114, 55);
+}
+
+/* Notification panel */
+.notification-panel {
+    position: fixed;
+    right: -300px; /* Initially hidden off the screen */
+    top: 50%;
+    transform: translateY(-50%);
+    width: 300px; /* Panel width */
+    height: 300px;
+    background-color: #e0e0e0; /* Match surrounding gray */
+    color: #333;
+    box-shadow: -4px 0 10px rgba(0, 0, 0, 0.1);
+    transition: right 0.3s ease; /* Smooth transition */
+    z-index: 999; /* Below the button */
+    overflow: hidden;
+}
+
+.notification-panel.open {
+    right: 0; /* When open, move to the right */
+}
+
+/* Content inside the notification panel */
+.notification-panel .panel-content {
+    padding: 20px;
+}
+
+.notification-panel .panel-content h4 {
+    margin-bottom: 10px;
+}
+
+.notification-panel .panel-content ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.notification-panel .panel-content ul li {
+    padding: 8px 0;
+    border-bottom: 1px solid #ccc;
+}
+</style>
+{%endblock%}
