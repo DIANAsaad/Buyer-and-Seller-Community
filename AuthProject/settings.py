@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'main.apps.MainConfig',
+    'chat.apps.ChatConfig',
     'crispy_forms',
     'crispy_bootstrap5'
 ]
@@ -65,7 +66,7 @@ ROOT_URLCONF = 'AuthProject.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR/'main'/'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

@@ -19,10 +19,12 @@
 </div>
 
 <script>
+window.onload=function(){
    function togglePanel() {
     const panel = document.getElementById('notificationPanel');
-    
-    if (!panel) {
+    const button = document.querySelector('notification-button');
+
+    if (!panel || !button) {
         console.error('Notification panel not found');
         return;
     }
@@ -47,11 +49,15 @@
         .then(data => {
             console.log(data.message);
             // Optionally, you can update the UI to remove the "New" label after marking as read
+            if (button.classList.contains('has_unread')){
+                button.classList.remove('has_unread');
+            }
         })
         .catch(error => console.error('Error:', error));
     }
 }
-
+document.querySelector('.notification-button').onclick=togglePanel;
+}
 </script>
 
 {% block extra_css %}

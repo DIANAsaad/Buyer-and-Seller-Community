@@ -44,9 +44,9 @@ def sign_up(request):
 
 def read_notifications(request):
    notifications=Notifications.objects.filter(receiver=request.user).all()
-   notifications.is_not_read=notifications.filter(is_read=False)
-   if not notifications.is_not_read:
-      notifications.filter(is_read=True)
+   for notification in notifications:
+       notification.is_read=True
+       notification.save()
    return JsonResponse({'status': 'success', 'message': 'Notifications marked as read'})
 
 
