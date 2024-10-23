@@ -9,7 +9,7 @@
             {% for notification in notifications%}
             <li>
                 {{ notification.message }} - {{ notification.created_at }}
-                {% if notification.is_not_read %}
+                {% if not notification.is_read %}
                     <strong>(New)</strong>
                 {% endif %}
             </li>
@@ -19,46 +19,57 @@
 </div>
 
 <script>
-window.onload=function(){
-   function togglePanel() {
-    const panel = document.getElementById('notificationPanel');
-    const button = document.querySelector('notification-button');
-
-    if (!panel || !button) {
-        console.error('Notification panel not found');
-        return;
-    }
-
-    panel.classList.toggle('open'); // Toggles the 'open' class to show/hide the panel
-
-    // If the panel is opened, mark notifications as read
-    if (panel.classList.contains('open')) {
-        fetch("/read_notifications", {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': '{{ csrf_token }}', // Make sure to render the CSRF token correctly
-                'Content-Type': 'application/json'
-            },
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
+    window.onload = function() {
+        // Check if the current user has unread notifications on page load
+        fetch("/notifications")  // Endpoint for checking unread notifications
+        .then(response => response.json())
         .then(data => {
-            console.log(data.message);
-            // Optionally, you can update the UI to remove the "New" label after marking as read
-            if (button.classList.contains('has_unread')){
-                button.classList.remove('has_unread');
+            if (data.not_is_read) {  // If there are unread notifications, light up the bell
+                document.querySelector('.notification-button').classList.add('has_unread');
             }
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => console.error('Error fetching unread notifications:', error));
+    
+        // Function to toggle the notification panel
+        function togglePanel() {
+            const panel = document.getElementById('notificationPanel');
+            const button = document.querySelector('.notification-button');
+    
+            if (!panel || !button) {
+                console.error('Notification panel or button not found');
+                return;
+            }
+    
+            // Open the notification panel
+            panel.classList.toggle('open'); // Toggle panel visibility
+    
+            // Mark notifications as read when the panel is opened
+            if (panel.classList.contains('open')) {
+                fetch("/notifications", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',  // Django CSRF token for security
+                        'Content-Type': 'application/json'
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Notifications marked as read:", data.message);
+    
+                    // Remove 'has_unread' class after marking notifications as read
+                    button.classList.remove('has_unread'); // Turn off the bell light
+                })
+                .catch(error => console.error('Error marking notifications as read:', error));
+            }
+        }
+    
+        // Attach the toggle function to the notification button's click event
+        document.querySelector('.notification-button').onclick = togglePanel;
     }
-}
-document.querySelector('.notification-button').onclick=togglePanel;
-}
-</script>
+    </script>
+    
+
+    
 
 {% block extra_css %}
 <style>
@@ -119,6 +130,11 @@ document.querySelector('.notification-button').onclick=togglePanel;
 .notification-panel .panel-content ul li {
     padding: 8px 0;
     border-bottom: 1px solid #ccc;
+}
+
+.notification-button.has_unread {
+    background-color: #f39c12; /* Change to the color you want for "unread" indicator */
+    border: 1px solid #e67e22;
 }
 </style>
 {%endblock%}

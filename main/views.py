@@ -43,11 +43,9 @@ def sign_up(request):
    return render(request,'registration/sign_up.html',{'form': form})
 
 def read_notifications(request):
-   notifications=Notifications.objects.filter(receiver=request.user).all()
-   for notification in notifications:
-       notification.is_read=True
-       notification.save()
-   return JsonResponse({'status': 'success', 'message': 'Notifications marked as read'})
+  notifications = Notifications.objects.filter(receiver=request.user, is_read=False)  # Filter only unread notifications
+  notifications.update(is_read=True) 
+  return JsonResponse({'status': 'success', 'message': 'Notifications marked as read'})
 
 
 def user_logout(request):
