@@ -59,6 +59,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'main.middleware.HasProfileMiddleware',
+    'main.middleware.NotificationsMiddleware',
 ]
 
 ROOT_URLCONF = 'AuthProject.urls'

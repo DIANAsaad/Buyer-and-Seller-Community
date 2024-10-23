@@ -19,7 +19,6 @@ def welcome(request):
 @login_required(login_url='/login')
 def home(request):
    posts=Post.objects.prefetch_related('comment_set','like_set').all()
-   notifications=Notifications.objects.filter(receiver=request.user).order_by('-created_at')
    if request.method=="POST":
       post_id=request.POST.get("post-id")
       if post_id:
@@ -28,8 +27,7 @@ def home(request):
             post.delete()   
    for post in posts:
       post.is_liked_by_user = Like.objects.filter(post=post, liker=request.user).exists()
-      request.user.has_created_profile = Profile.objects.filter(owner=request.user).exists()
-   return render(request,'main/home.html',{'posts':posts, 'notifications':notifications})  
+   return render(request,'main/home.html',{'posts':posts})  
 
 def sign_up(request):
    if request.method=='POST':
