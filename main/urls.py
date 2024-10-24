@@ -16,5 +16,5 @@ urlpatterns=[
     path('create_profile', views.create_profile),
     path('profile/', views.profile),
     path('profile/<str:username>', views.profile),
-    path('read_notifications',views.notifications)
+    path('read_notifications',views.read_notifications)
             ] 

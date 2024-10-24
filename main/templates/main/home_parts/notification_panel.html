@@ -1,12 +1,19 @@
-<button class="notification-button" onclick="togglePanel()">
-    <i class="fas fa-bell"></i>
-</button>
+<!-- check if user.has_unread_notifications is True -->
+{% if user.has_unread_notifications %}
+    <button class="notification-button has_unread" onclick="togglePanel()">
+        <i class="fas fa-bell"></i>
+    </button>
+{% else %}
+    <button class="notification-button" onclick="togglePanel()">
+        <i class="fas fa-bell"></i>
+    </button>
+{% endif %}
 
 <div class="notification-panel" id="notificationPanel">
     <div class="panel-content">
         <h4>Notifications</h4>
         <ul>
-            {% for notification in notifications%}
+            {% for notification in user.notifications%}
             <li>
                 {{ notification.message }} - {{ notification.created_at }}
                 {% if not notification.is_read %}
@@ -20,16 +27,6 @@
 
 <script>
     window.onload = function() {
-        // Check if the current user has unread notifications on page load
-        fetch("/notifications")  // Endpoint for checking unread notifications
-        .then(response => response.json())
-        .then(data => {
-            if (data.not_is_read) {  // If there are unread notifications, light up the bell
-                document.querySelector('.notification-button').classList.add('has_unread');
-            }
-        })
-        .catch(error => console.error('Error fetching unread notifications:', error));
-    
         // Function to toggle the notification panel
         function togglePanel() {
             const panel = document.getElementById('notificationPanel');
@@ -45,7 +42,7 @@
     
             // Mark notifications as read when the panel is opened
             if (panel.classList.contains('open')) {
-                fetch("/notifications", {
+                fetch("/read_notifications", {
                     method: 'POST',
                     headers: {
                         'X-CSRFToken': '{{ csrf_token }}',  // Django CSRF token for security
@@ -106,6 +103,7 @@
     transition: right 0.3s ease; /* Smooth transition */
     z-index: 999; /* Below the button */
     overflow: hidden;
+    overflow-y: auto;
 }
 
 .notification-panel.open {
