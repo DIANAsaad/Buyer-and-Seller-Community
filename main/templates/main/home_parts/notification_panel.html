@@ -13,7 +13,7 @@
         <ul>
             {% for notification in user.notifications %}
             <li>
-                {{ notification.message }} - {{ notification.created_at }}
+                {{ notification.message }} - <span class="created_at">{{ notification.created_at|date:"Y-m-d\\TH:i:s" }}</span>
                 {% if not notification.is_read %}
                     <strong>(New)</strong>
                 {% endif %}
@@ -54,6 +54,28 @@
         }
 
         document.querySelector('.notification-button').onclick = togglePanel;
+
+        const { DateTime } = luxon;
+        // grab all the elements with the class 'created_at'
+        const created_at_elements = document.querySelectorAll('.created_at');
+        // grab the value of the 'created_at' element
+        created_at_elements.forEach(element => {
+            const dateText = element.textContent.trim();
+            let date;
+            
+            // Check if the date text matches ISO format
+            if (DateTime.fromISO(dateText, { zone: 'utc' }).isValid) {
+                date = DateTime.fromISO(dateText, { zone: 'utc' }).setZone('local');
+            } else {
+                // Fall back to a custom format, assuming input is UTC
+                date = DateTime.fromFormat(dateText, "MMM. d, yyyy, h:mm a", { zone: 'utc' }).setZone('local');
+            }
+
+            // Display the formatted date if valid
+            if (date.isValid) {
+                element.textContent = date.toLocaleString(DateTime.DATETIME_MED);
+            }
+        });
     }
 </script>
 
@@ -72,7 +94,7 @@
     cursor: pointer;
     z-index: 1000;
     box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
-    position: relative;
+    margin-right: 15px;
 }
 
 .notification-button i {
