@@ -1,0 +1,29 @@
+<!-- chat/partials/message.html -->
+{% for group_message in group_messages %}
+<div class="message d-flex mb-3 
+            {% if group_message.author == request.user %} justify-content-end user-message {% else %} justify-content-start other-message {% endif %}">
+    {% if group_message.author != request.user %}
+        <!-- Avatar for other users' messages -->
+        <div class="avatar me-2">
+            {% for profile in group_message.author.profile_set.all %}
+            <img src="{{ profile.profile_image_url }}" class="rounded-circle" alt="Avatar">
+            {% endfor %}
+        </div>
+    {% endif %}
+    
+    <div class="message-content p-3 rounded shadow-sm">
+        <strong class="d-block">{{ group_message.author }}</strong>
+        <p class="mb-0">{{ group_message.body }}</p>
+        <small class="text-muted d-block text-end mt-1">{{ group_message.timestamp|date:"H:i" }}</small>
+    </div>
+
+    {% if group_message.author == request.user %}
+        <!-- Avatar for the current user's messages -->
+        <div class="avatar ms-2">
+            {% for profile in group_message.author.profile_set.all %}
+            <img src="{{ profile.profile_image_url }}" class="rounded-circle" alt="Avatar">
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% endfor %}
