@@ -61,6 +61,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'main.middleware.HasProfileMiddleware',
     'main.middleware.NotificationsMiddleware',
+    'django_htmx.middleware.HtmxMiddleware'
 ]
 
 ROOT_URLCONF = 'AuthProject.urls'

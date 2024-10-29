@@ -9,12 +9,14 @@
          style="background-image: url('/static/img/whatsapp-bg.png'), linear-gradient(to bottom right, #f0f8ff, #e6f7ff); background-size: cover; height: 400px; overflow-y: auto;">
         
         <!-- Loop through each message in group_messages -->
+        {% for message in messages %}
         {%include 'chat_requirements/chat_message.html'%}
+        {%endfor%}
         
     </div>
 
     <!-- Form to send a new message -->
-    <form id="message-form"  class="mt-3" action="/message_creation" hx-post="/message_creation" hx-target="#chat-box" hx-swap="beforeend">
+    <form id="message-form"  class="mt-3"  hx-post="/message_creation" hx-target="#chat-box" hx-swap="beforeend" _="on htmx:afterRequest reset() me">
         {% csrf_token %}
         <div class="input-group">
             <input type="text" name="body" id="message-id" class="form-control message-form" placeholder="Type your message..." required>
@@ -22,6 +24,17 @@
         </div>
     </form>
 </div>
+
+<script>
+    function scrollToBottom() {
+        const container = document.getElementById("chat-box");  // Corrected ID here
+        if (container) {
+            container.scrollTop = container.scrollHeight;
+        }
+    }
+
+scrollToBottom()
+</script>
 
 <style>
     /* Chat box with gradient overlay background */
@@ -86,4 +99,5 @@
         color: #999;
     }
 </style>
+
 {% endblock %}
