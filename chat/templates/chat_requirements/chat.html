@@ -16,7 +16,7 @@
     </div>
 
     <!-- Form to send a new message -->
-    <form id="message-form"  class="mt-3"  hx-post="/message_creation" hx-target="#chat-box" hx-swap="beforeend" _="on htmx:afterRequest reset() me">
+    <form id="message-form"  class="mt-3" hx-ext="ws" ws-connect="/ws/chatroom/Public Chat" ws-send _="on htmx:wsAfterSend reset() me">
         {% csrf_token %}
         <div class="input-group">
             <input type="text" name="body" id="message-id" class="form-control message-form" placeholder="Type your message..." required>
@@ -27,13 +27,19 @@
 
 <script>
     function scrollToBottom() {
-        const container = document.getElementById("chat-box");  // Corrected ID here
+        const container = document.getElementById("chat-box");  
         if (container) {
             container.scrollTop = container.scrollHeight;
         }
     }
 
-scrollToBottom()
+scrollToBottom();
+document.body.addEventListener("htmx:afterswap", function(event){
+    if (event.detail.target.id=="chat-box"){
+        scrollToBottom();
+    }
+
+});
 </script>
 
 <style>

@@ -1,4 +1,10 @@
 <!-- chat/partials/message.html -->
+
+
+
+<div id="chat-box" hx-swap-oob="beforeend">
+
+
  <div class="fade-in-up">
 {%include 'chat_requirements/chat_message.html'%}
 </div>
@@ -13,3 +19,5 @@
         animation: fadeInAndUp 0.6s ease;
     }
 </style>
+<script>scrollToBottom()</script>
+</div>

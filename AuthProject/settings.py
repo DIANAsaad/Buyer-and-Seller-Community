@@ -34,6 +34,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -82,7 +84,9 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'AuthProject.wsgi.application'
+# WSGI_APPLICATION = 'AuthProject.wsgi.application'
+ASGI_APPLICATION = 'AuthProject.asgi.application'
+
 
 
 # Database
