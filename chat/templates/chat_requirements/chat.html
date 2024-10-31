@@ -16,7 +16,10 @@
     </div>
 
     <!-- Form to send a new message -->
-    <form id="message-form"  class="mt-3" hx-ext="ws" ws-connect="/ws/chatroom/Public Chat" ws-send _="on htmx:wsAfterSend reset() me">
+    <form id="message-form" class="mt-3" 
+      hx-ext="ws" 
+      ws-connect="/ws/chatroom/PublicChat" 
+      ws-send="on htmx:wsAfterSend reset() me">
         {% csrf_token %}
         <div class="input-group">
             <input type="text" name="body" id="message-id" class="form-control message-form" placeholder="Type your message..." required>
@@ -35,7 +38,7 @@
 
 scrollToBottom();
 document.body.addEventListener("htmx:afterswap", function(event){
-    if (event.detail.target.id=="chat-box"){
+    if (event.detail.target.id==="chat-box"){
         scrollToBottom();
     }
 

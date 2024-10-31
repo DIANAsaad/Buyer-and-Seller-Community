@@ -14,6 +14,7 @@ class ChatroomConsumer(WebsocketConsumer):
     def receive(self, text_data): #received data is in the format of json, we have to convert it to python object
         text_data_json=json.loads(text_data)
         body=text_data_json['body']
+        
     #save message in db
         message=GroupMessage.objects.create(
            body= body,
@@ -23,7 +24,7 @@ class ChatroomConsumer(WebsocketConsumer):
     #Send data to frontend
         context= {
         'message': message,
-        'user':self.user,
+        'user':self.user.username,
          }
         html=render_to_string("chat_requierments/partials/chat_message_p.html", context=context)
         self.send(text_data=html)

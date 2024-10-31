@@ -8,7 +8,7 @@ from django.shortcuts import HttpResponse
 
 
 def chat(request):
-    group=ChatGroup.objects.get(group_name="Public Chat")
+    group=ChatGroup.objects.get(group_name="PublicChat")
     messages=GroupMessage.objects.filter(group=group).all()
     return render(request,'chat_requirements/chat.html', {'messages': messages})
 
@@ -19,7 +19,7 @@ def message_creation(request):
         if form.is_valid():
             message=form.save(commit=False)
             message.author=request.user
-            message.group=ChatGroup.objects.get(group_name="Public Chat")
+            message.group=ChatGroup.objects.get(group_name="PublicChat")
             message=form.save()
             context={'message':message,
                      'user':request.user}
