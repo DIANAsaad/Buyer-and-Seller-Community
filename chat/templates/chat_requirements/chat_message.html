@@ -1,7 +1,6 @@
-
 <div class="message d-flex mb-3 
-            {% if message.author == request.user %} justify-content-end user-message {% else %} justify-content-start other-message {% endif %}">
-    {% if message.author != request.user %}
+            {% if message.author == user %} justify-content-end user-message {% else %} justify-content-start other-message {% endif %}">
+    {% if message.author != user %}
         <!-- Avatar for other users' messages -->
         <div class="avatar me-2">
             {% for profile in message.author.profile_set.all %}
@@ -9,14 +8,14 @@
             {% endfor %}
         </div>
     {% endif %}
-    
+
     <div class="message-content p-3 rounded shadow-sm">
         <strong class="d-block">{{ message.author }}</strong>
         <p class="mb-0">{{ message.body }}</p>
         <small class="text-muted d-block text-end mt-1">{{ message.timestamp|date:"H:i" }}</small>
     </div>
 
-    {% if message.author == request.user %}
+    {% if message.author == user %}
         <!-- Avatar for the current user's messages -->
         <div class="avatar ms-2">
             {% for profile in message.author.profile_set.all %}
