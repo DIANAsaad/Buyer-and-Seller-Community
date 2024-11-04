@@ -4,6 +4,10 @@
 <div class="container mt-4">
     <h2 class="text-center text-primary fw-bold">Chat Room</h2>
     
+    <div class="text-center mb-2">
+        <div id="online-icon"></div>
+        {% include 'chat_requirements/partials/online_count.html' %}
+    </div>
     <!-- Chat box with a background -->
     <div id="chat-box" class="chat-box border rounded p-3 mb-3 position-relative" 
          style="background-image: url('/static/img/whatsapp-bg.png'), linear-gradient(to bottom right, #f0f8ff, #e6f7ff); background-size: cover; height: 400px; overflow-y: auto;">
