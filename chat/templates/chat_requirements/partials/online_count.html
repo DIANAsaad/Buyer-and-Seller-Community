@@ -1,4 +1,4 @@
-<span id="online-count" hx-swap-oob="outerHTML" class ="fade-in-scale pr-1"> Online: {{ online_count }}
+
 <style>
     @keyframes fadeInScale{
         from {opacity: 0; transform: scale(4)}
@@ -7,11 +7,32 @@
     .fade-in-scale{
         animation: fadeInScale 0.6s ease;
     }
-</style>
-</span>
 
+
+   .online-dot {
+    width:10px;
+    height: 10px;
+    background-color: greenyellow;
+    border-radius: 50%;
+    display: inline-block;
+   }
+
+
+   .offline-dot {
+    width:10px;
+    height: 10px;
+    background-color: grey;
+    border-radius: 50%;
+    display: inline-block;
+   }
+
+</style>
+
+
+<span id="online-count" hx-swap-oob="outerHTML" class ="fade-in-scale pr-1"> Online: {{ online_count }}
 {%if online_count %}
-<div id="online-icon" class="absolute top-2 left-2 rounded-full bg-green-500 p-1.5"></div>
+<span class="online-dot"></span>
 {%else%}
-<div id="online-icon" class="absolute top-2 left-2 rounded-full bg-gray-500 p-1.5"></div>
+<span class="offline-dot"></span>
 {%endif%}
+</span>
