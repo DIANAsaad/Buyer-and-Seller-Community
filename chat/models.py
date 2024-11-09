@@ -1,10 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+import shortuuid
 class ChatGroup(models.Model):
-    group_name = models.CharField(max_length=128, unique=True)
+    group_name = models.CharField(max_length=128, unique=True, default=shortuuid.uuid) #short uuid has 22 charaters(user friendly url)
     users_online=models.ManyToManyField(User,related_name="online_in_groups",blank=True)
-
+    members=models.ManyToManyField(User, related_name='chat_groups', blank=True)
+    is_private=models.BooleanField(default=False)
     def __srt__(self):
         return self.group_name
     
