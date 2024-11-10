@@ -15,6 +15,6 @@ urlpatterns=[
     path('delete_comment', views.delete_comment),
     path('create_profile', views.create_profile),
     path('profile/', views.profile),
-    path('profile/<str:username>', views.profile),
+    path('profile/<str:username>', views.profile, name='author-profile'),
     path('read_notifications',views.read_notifications)
             ] 

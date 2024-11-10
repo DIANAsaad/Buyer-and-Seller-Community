@@ -34,9 +34,9 @@
                 <li class="nav-item">
                     <a class="nav-link text-white" href="/create_post">Post</a>
                 </li>
-                {% elif request.path == '/profile/'|add:post.author.username %}
+                {% elif request.resolver_match.url_name == 'author-profile' %}
                 <li>
-                    <a href="/chat">Chat with Owner</a>
+                    <a class="nav-link text-white" href="{% url 'private-chat' profile.owner_id %}">Chat with {{profile.owner}}</a>
                 </li>
                 {%endif%}
                 {% else %}
