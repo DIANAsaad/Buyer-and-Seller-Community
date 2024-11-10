@@ -18,12 +18,12 @@ def chat(request, chatroom_name="PublicChat"):
             if member != request.user:
                  other_user=member
                  break
-            context={
+          context={
            'messages':messages,
            'other_user':other_user,
            "chatroom_name":chatroom_name,
             }
-            return render(request,'chat_requirements/chat.html', context)
+          return render(request,'chat_requirements/chat.html', context)
     else:
         return render(request,'chat_requirements/chat.html', {'messages':messages})
 
